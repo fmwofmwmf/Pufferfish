@@ -24,7 +24,7 @@ public class BulletGraphView : GraphView
       this.AddManipulator(new ContentZoomer());
       this.AddManipulator(new RectangleSelector());
       
-      var stylesheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Editor/BulletGraphEditor.uss");
+      var stylesheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Editor/Bullet/BulletGraphEditor.uss");
       styleSheets.Add(stylesheet);
    }
 

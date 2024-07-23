@@ -13,16 +13,11 @@ public class LogNode: Node
    public override string Name => "Log";
    protected override TreeStateData Evaluate(TreeStateData state)
    {
-      state = state.Repeat();
-      var i = 0;
-      while (state.state.Repeat && i<1000)
-      {
-         i++;
-         state = GetAllInputs(state.Reset());
-         if (!state.state.Virtual) Debug.Log($"{message} ({count}) ({state.state.Repeat})");
-         else Debug.Log($"{message} ({count}) ({state.state.Repeat}) Virt");
-         state = AfterIter(state);
-      } 
+       
+      state = GetAllInputs(state.Reset());
+      if (!state.state.Virtual) Debug.Log($"{message} ({count}) ({state.state.Repeat})");
+      else Debug.Log($"{message} ({count}) ({state.state.Repeat}) Virt");
+      
       return state;
    }
 }

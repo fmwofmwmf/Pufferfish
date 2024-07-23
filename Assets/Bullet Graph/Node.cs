@@ -153,13 +153,6 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
         yep[a].field = "";
     }
 
-    protected TreeStateData AfterIter(TreeStateData currentState)
-    {
-        if (this != currentState.originator) return currentState;
-        currentState.iterationId++;
-        return currentState;
-    }
-
     public void OnBeforeSerialize()
     {
         

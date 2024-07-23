@@ -22,11 +22,11 @@ public class BulletGraphEditor : EditorWindow
         // Each editor window contains a root VisualElement object
         VisualElement root = rootVisualElement;
 
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/Editor/BulletGraphEditor.uxml");
+        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/Editor/Bullet/BulletGraphEditor.uxml");
         visualTree.CloneTree(root);
 
         // Instantiate UXML
-        var stylesheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Editor/BulletGraphEditor.uss");
+        var stylesheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Editor/Bullet/BulletGraphEditor.uss");
         root.styleSheets.Add(stylesheet);
 
         graphView = root.Q<BulletGraphView>();

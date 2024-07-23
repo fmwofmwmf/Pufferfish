@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Reflection;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -27,7 +28,8 @@ public class NodeEditor: Editor
                 if (g != null) DestroyImmediate(g);
                 var r = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 r.name = "BulletTest";
-                n.Eval(new(){originator = n, attached = r, activationId = Random.Range(0, 57890190), test = true});
+                RunNode(n, r);
+
             }
             if (GUILayout.Button("Reset"))
             {
@@ -55,11 +57,20 @@ public class NodeEditor: Editor
         serializedObject.ApplyModifiedProperties();
     }
 
-    // private Awaitable RunNode()
-    // {
-    //     
-    //     return null;
-    // }
+    private async Awaitable RunNode(Node n, GameObject g)
+    {
+        Node.TreeStateData state = new() { originator = n, attached = g, activationId = Random.Range(0, 57890190), test = true };
+        state = state.Repeat();
+        var i = 0;
+        while (state.state.Repeat && i<300)
+        {
+            state = n.Eval(state.Reset());
+            state.iterationId++;
+            i++;
+            await Task.Delay(1000/60);
+        }
+        Debug.Log($"finished testing {n}");
+    }
 
     private object DrawField(FieldInfo field, object value)
     {
