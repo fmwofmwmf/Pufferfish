@@ -1,0 +1,1270 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7102940571491039848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ac0b2d11a6a42aca2511cf2d61a52fa, type: 3}
+  m_Name: MathFNode
+  m_EditorClassIdentifier: 
+  guid: 51c2d9354963310479e91aa5f6ed5424
+  graphPos: {x: 62.499893, y: 434.00003}
+  yap:
+  - float1
+  - float2
+  - output
+  yep:
+  - field: outF
+    read: 0
+    other: {fileID: -183470533714521089}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: outF
+    read: 0
+    other: {fileID: -183470533714521089}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: count
+    read: 0
+    other: {fileID: -2056122098354176108}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  float1: 4
+  float2: 4
+  output: 8
+  mode: 0
+--- !u!114 &-6175259370911933106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f741b0653b4b0f81329676d0d4ec1a, type: 3}
+  m_Name: PositionNode
+  m_EditorClassIdentifier: 
+  guid: 46b31577d05136b45a73754227a48acd
+  graphPos: {x: -234.00002, y: -110.000015}
+  yap:
+  - position
+  - facing
+  yep:
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: vec2
+    read: 0
+    other: {fileID: 3759714398140258819}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  position: {x: 0, y: 0, z: 0}
+  facing: {x: 1, y: 0, z: 0}
+  target: 0
+  mode: 0
+--- !u!114 &-5328008477343880117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ba01976bf78487baab3d5c06ee4c37d, type: 3}
+  m_Name: AnimateNode
+  m_EditorClassIdentifier: 
+  guid: 0c1fe410e44d1ec49836ddeb646a9c23
+  graphPos: {x: 801.3501, y: -110.000046}
+  yap:
+  - bullet
+  - output
+  - pos
+  - dir
+  - i
+  yep:
+  - field: output
+    read: 1
+    other: {fileID: 1934832629800945740}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: input
+    read: 0
+    other: {fileID: 7337133395097502054}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  bullet:
+    main: {fileID: 0}
+    startPos: {x: 0, y: 0, z: 0}
+    startDir: {x: 0, y: 0, z: 0}
+    localT: 0
+  output:
+    main: {fileID: 0}
+    startPos: {x: 0, y: 0, z: 0}
+    startDir: {x: 0, y: 0, z: 0}
+    localT: 0
+  pos: {x: 0, y: 0, z: 0}
+  dir: {x: 0, y: 0, z: 0}
+  i: 0
+  id: 
+--- !u!114 &-2056122098354176108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e13f4f1e1da740609c13d388b5ac028b, type: 3}
+  m_Name: LogNode
+  m_EditorClassIdentifier: 
+  guid: 4efc51fb970b2d64c850473ab13cb59d
+  graphPos: {x: 364.53494, y: 428}
+  yap:
+  - count
+  yep:
+  - field: output
+    read: 0
+    other: {fileID: -7102940571491039848}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  message: rrr
+  count: 8
+--- !u!114 &-1979491028141353623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16069e8fe7174736b574d20fe340ba56, type: 3}
+  m_Name: DelayNode
+  m_EditorClassIdentifier: 
+  guid: aa437976f0ec06541815db80e176f833
+  graphPos: {x: 205, y: 60}
+  yap:
+  - delay
+  - inF
+  - outF
+  - inV3
+  - outV3
+  yep:
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0.1
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: float
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: vector3
+    read: 0
+    other: {fileID: 3992230667069298692}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: direction
+    read: 0
+    other: {fileID: 1934832629800945740}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  delay: 0.1
+  before: 1
+  inF: 0
+  outF: 0
+  inV3: {x: 0, y: 4, z: 2}
+  outV3: {x: 0, y: 4, z: 2}
+--- !u!114 &-820211931639266322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20b5942bb68d4880aecc4caeafcab369, type: 3}
+  m_Name: RepeatNode
+  m_EditorClassIdentifier: 
+  guid: 24cc909ba234ee84680ecb6c91594f08
+  graphPos: {x: -350.00006, y: 215.19756}
+  yap:
+  - count
+  - i
+  - f
+  - readF
+  - max
+  - min
+  - increment
+  - linkIn
+  - linkOut
+  yep:
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 5
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: int
+  - field: count
+    read: 0
+    other: {fileID: 7534033401702485852}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: z
+    read: 0
+    other: {fileID: 3992230667069298692}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 3
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: float
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 1
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: float
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  max: 3
+  min: 0
+  increment: 1
+  linkIn: 0
+  f: 2
+  readF: 2
+  linkOut: 0
+--- !u!114 &-183470533714521089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16069e8fe7174736b574d20fe340ba56, type: 3}
+  m_Name: DelayNode
+  m_EditorClassIdentifier: 
+  guid: d9ba1b13a00a8eb4686d05682e4bdb37
+  graphPos: {x: -234.4791, y: 428}
+  yap:
+  - delay
+  - inF
+  - outF
+  - inV3
+  - outV3
+  yep:
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0.2
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: float
+  - field: f
+    read: 0
+    other: {fileID: 81494817539701276}
+    defaultValue:
+      intValue: 0
+      floatValue: 2
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: float
+  - field: float2
+    read: 0
+    other: {fileID: -7102940571491039848}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  delay: 0.2
+  before: 1
+  inF: 4
+  outF: 4
+  inV3: {x: 0, y: 0, z: 0}
+  outV3: {x: 0, y: 0, z: 0}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b46548123a2dea4f822da52dfb40700, type: 3}
+  m_Name: Test Graph
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: -6175259370911933106}
+  - {fileID: 1934832629800945740}
+  - {fileID: 3759714398140258819}
+  - {fileID: 3992230667069298692}
+  - {fileID: 7534033401702485852}
+  - {fileID: -2056122098354176108}
+  - {fileID: -820211931639266322}
+  - {fileID: -183470533714521089}
+  - {fileID: 81494817539701276}
+  - {fileID: -7102940571491039848}
+  - {fileID: -1979491028141353623}
+  - {fileID: 7337133395097502054}
+  - {fileID: -5328008477343880117}
+  - {fileID: 7791858366160043222}
+--- !u!114 &81494817539701276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20b5942bb68d4880aecc4caeafcab369, type: 3}
+  m_Name: RepeatNode
+  m_EditorClassIdentifier: 
+  guid: 41867f05ad5c5c34c973496dc8247710
+  graphPos: {x: -471.64627, y: 428}
+  yap:
+  - max
+  - min
+  - increment
+  - f
+  - readF
+  - linkIn
+  - linkOut
+  yep:
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 5
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: float
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 1
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: float
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  max: 5
+  min: 0
+  increment: 1
+  linkIn: 0
+  f: 4
+  readF: 4
+  linkOut: 0
+--- !u!114 &1934832629800945740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e31a45b743254529a5beae32199d9e13, type: 3}
+  m_Name: FireNode
+  m_EditorClassIdentifier: 
+  guid: 292775280ae7a764f800e63fc501d147
+  graphPos: {x: 530.6893, y: -110}
+  yap:
+  - bullets
+  - bullet
+  - position
+  - direction
+  - output
+  yep:
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: output
+    read: 0
+    other: {fileID: 3759714398140258819}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: outV3
+    read: 0
+    other: {fileID: -1979491028141353623}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 1, y: 2.11, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: Vector3
+  - field: bullet
+    read: 0
+    other: {fileID: -5328008477343880117}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  output:
+    main: {fileID: 0}
+    startPos: {x: 0, y: 0, z: 0}
+    startDir: {x: 0, y: 0, z: 0}
+    localT: 0
+  bullet: {fileID: 0}
+  position: {x: 1, y: 0, z: 0}
+  direction: {x: 0, y: 4, z: 2}
+  id: ww
+--- !u!114 &3759714398140258819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d03aaf211e2c4c65af036b2a82020dec, type: 3}
+  m_Name: AddV3Node
+  m_EditorClassIdentifier: 
+  guid: 394c0a9d1986c6d4dafbd84ea725c49e
+  graphPos: {x: 9.385023, y: -110.000015}
+  yap:
+  - vec1
+  - vec2
+  - output
+  yep:
+  - field: position
+    read: 0
+    other: {fileID: -6175259370911933106}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: facing
+    read: 0
+    other: {fileID: -6175259370911933106}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 3.29, y: 0.31, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: Vector3
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  vec1: {x: 0, y: 0, z: 0}
+  vec2: {x: 1, y: 0, z: 0}
+  output: {x: 1, y: 0, z: 0}
+  mode: 0
+--- !u!114 &3992230667069298692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5448a7f32d9f43538323a6c4bfac1321, type: 3}
+  m_Name: JoinVNode
+  m_EditorClassIdentifier: 
+  guid: 4bd53dc1239897942b168244a477df0c
+  graphPos: {x: -81, y: 147}
+  yap:
+  - x
+  - y
+  - z
+  - vector2
+  - vector3
+  yep:
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: f
+    read: 0
+    other: {fileID: 7534033401702485852}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: f
+    read: 0
+    other: {fileID: -820211931639266322}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  x: 0
+  y: 4
+  z: 2
+  vector3: {x: 0, y: 4, z: 2}
+  vector2: {x: 0, y: 4}
+--- !u!114 &7337133395097502054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94fca93d06a445078e5ab2bf56655d5a, type: 3}
+  m_Name: AnimateMoveNode
+  m_EditorClassIdentifier: 
+  guid: 636e398e58efc4b46816b9f61b5a4388
+  graphPos: {x: 1215.0502, y: -110.00004}
+  yap:
+  - input
+  - position
+  - direction
+  yep:
+  - field: output
+    read: 0
+    other: {fileID: -5328008477343880117}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  input:
+    main: {fileID: 0}
+    startPos: {x: 0, y: 0, z: 0}
+    startDir: {x: 0, y: 0, z: 0}
+    localT: 0
+  position: {x: 0, y: 0, z: 0}
+  direction: {x: 0, y: 0, z: 0}
+  id: 
+--- !u!114 &7534033401702485852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20b5942bb68d4880aecc4caeafcab369, type: 3}
+  m_Name: RepeatNode
+  m_EditorClassIdentifier: 
+  guid: 1b08ad493ad10ad45b609cf09938e498
+  graphPos: {x: -350.00006, y: 60.197533}
+  yap:
+  - count
+  - i
+  - f
+  - readF
+  - max
+  - min
+  - increment
+  - linkIn
+  - linkOut
+  yep:
+  - field: i
+    read: 0
+    other: {fileID: -820211931639266322}
+    defaultValue:
+      intValue: 3
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: int
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 5
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: float
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: float
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 1
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: float
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  - field: 
+    read: 0
+    other: {fileID: 0}
+    defaultValue:
+      intValue: 0
+      floatValue: 0
+      stringValue: 
+      boolValue: 0
+      vector2Value: {x: 0, y: 0}
+      vector3Value: {x: 0, y: 0, z: 0}
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+      gameObjectValue: {fileID: 0}
+      transformValue: {fileID: 0}
+      type: 
+  max: 5
+  min: 0
+  increment: 1
+  linkIn: 0
+  f: 4
+  readF: 4
+  linkOut: 0
+--- !u!114 &7791858366160043222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d03aaf211e2c4c65af036b2a82020dec, type: 3}
+  m_Name: MathV3Node
+  m_EditorClassIdentifier: 
+  guid: 70fc06178c73a40478765385c6afd784
+  graphPos: {x: 0, y: 0}
+  yap: []
+  yep: []
+  vec1: {x: 0, y: 0, z: 0}
+  vec2: {x: 0, y: 0, z: 0}
+  output: {x: 0, y: 0, z: 0}
+  mode: 0

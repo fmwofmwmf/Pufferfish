@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Editor/BulletGraphEditor.uss?fileID=7433441132597879392&amp;guid=c8b112ae56951594889a80d76ec4807a&amp;type=3#BulletGraphEditor" />
+    <uie:Toolbar>
+        <uie:ToolbarMenu tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" text="Yooooo" />
+    </uie:Toolbar>
+    <SplitView fixed-pane-initial-dimension="300">
+        <ui:VisualElement style="flex-grow: 1;">
+            <BulletInspectorView name="BulletInspectorView" style="flex-grow: 1; background-color: rgb(60, 60, 60);">
+                <ui:Label tabindex="-1" text="Bruh" parse-escape-sequences="true" display-tooltip-when-elided="true" style="background-color: rgb(47, 47, 47); color: rgb(255, 255, 255);" />
+            </BulletInspectorView>
+        </ui:VisualElement>
+        <ui:VisualElement style="flex-grow: 1;">
+            <BulletGraphView focusable="true" style="flex-grow: 1;" />
+        </ui:VisualElement>
+    </SplitView>
+</ui:UXML>
