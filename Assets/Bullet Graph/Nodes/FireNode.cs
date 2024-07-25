@@ -21,7 +21,7 @@ public class FireNode: Node
          output = new(b, position, direction);
          
          var next = GetConnection("output");
-         if (next.other && !state.test)
+         if (next.other)
          {
             next.other.Eval(state);
          }

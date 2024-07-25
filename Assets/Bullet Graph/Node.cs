@@ -14,11 +14,14 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     [HideInInspector] public Vector2 graphPos;
 
     
-    [Editable] [SerializeField] private List<string> yap = new();
-    [Editable] [SerializeField] private List<ConnectedPort> yep = new();
+    [FormerlySerializedAs("yap")] [Editable] [SerializeField] private List<string> fieldNames = new();
+    [FormerlySerializedAs("yep")] [Editable] [SerializeField] private List<ConnectedPort> fieldConnections = new();
     private List<FieldInfo> fields;
     private List<FieldInfo> inFields;
+    public Dictionary<string, object> outputs;
     private int iterationId, activationId;
+    
+    
     [Serializable]
     public class ConnectedPort
     {
@@ -43,6 +46,7 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
             iterationId = state.iterationId;
             return Evaluate(state);
         }
+        
 
         return state;
     }
@@ -50,10 +54,10 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
 
     public ConnectedPort GetConnection(string fieldName)
     {
-        var a = yap.FindIndex(s => s == fieldName);
+        var a = fieldNames.FindIndex(s => s == fieldName);
         if (a != -1)
         {
-            return yep[a];
+            return fieldConnections[a];
         }
         return null;
     }
@@ -65,7 +69,7 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     
     public void Print()
     {
-        Debug.Log(yep);
+        Debug.Log(fieldConnections);
     }
     public virtual void Reset() {}
 
@@ -74,8 +78,7 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
         var s = new HashSet<ConnectedPort>();
         inFields.ForEach(f=>
         {
-            var a = GetConnection(f.Name);
-            s.Add(a);
+            s.Add(GetConnection(f.Name));
         });
         var outState = state.Clone();
         foreach (var port in s)
@@ -121,36 +124,36 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
 
     protected void GetInput(string field)
     {
-        var a = yap.FindIndex(s => s == field);
+        var a = fieldNames.FindIndex(s => s == field);
         
-        if (yep[a].field != "" && yep[a].other)
+        if (fieldConnections[a].field != "" && fieldConnections[a].other)
         {
-            var other = yep[a].other;
+            var other = fieldConnections[a].other;
             var f = GetAllFields().Find(s => s.Name == field);
-            var otherField = other.GetAllFields().Find(s => s.Name == yep[a].field);
+            var otherField = other.GetAllFields().Find(s => s.Name == fieldConnections[a].field);
             f.SetValue(this, otherField.GetValue(other));
         }
         else
         {
             var f = GetAllFields().Find(s => s.Name == field);
-            var v = yep[a].defaultValue.ExtractValue(f.FieldType);
+            var v = fieldConnections[a].defaultValue.ExtractValue(f.FieldType);
             f.SetValue(this, v);
         }
     }
     
     public void Connect(FieldInfo field, FieldInfo otherField, Node other)
     {
-        var a = yap.FindIndex(s => s == field.Name);
-        yep[a].field = otherField.Name;
-        yep[a].other = other;
-        yep[a].read = otherField.GetCustomAttribute<PortAttribute>().readOnly;
+        var a = fieldNames.FindIndex(s => s == field.Name);
+        fieldConnections[a].field = otherField.Name;
+        fieldConnections[a].other = other;
+        fieldConnections[a].read = otherField.GetCustomAttribute<PortAttribute>().readOnly;
     }
     
     public void Disconnect(string field)
     {
-        var a = yap.FindIndex(s => s == field);
-        yep[a].other = null;
-        yep[a].field = "";
+        var a = fieldNames.FindIndex(s => s == field);
+        fieldConnections[a].other = null;
+        fieldConnections[a].field = "";
     }
 
     public void OnBeforeSerialize()
@@ -162,19 +165,19 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     {
         foreach (var f in fields)
         {
-            var a = yap.FindIndex(s => s == f.Name);
+            var a = fieldNames.FindIndex(s => s == f.Name);
             if (a == -1)
             {
-                yap.Add(f.Name);
-                yep.Add(new(){other=null, field = ""});
+                fieldNames.Add(f.Name);
+                fieldConnections.Add(new(){other=null, field = ""});
             }
         }
     }
 
     public void UpdateDefault(FieldInfo field, object value)
     {
-        var a = yap.FindIndex(s => s == field.Name);
-        yep[a].defaultValue.SetValue(field, value);
+        var a = fieldNames.FindIndex(s => s == field.Name);
+        fieldConnections[a].defaultValue.SetValue(field, value);
     }
     
     

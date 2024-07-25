@@ -13,14 +13,15 @@ public class AnimateNode: Node
    [Port(true, true)] public Bullet output;
    [Port(true, true)] public Vector3 pos, dir;
    [Port(true, true)] public float index, time;
+   [Editable] public int maxAnimationLength;
    private List<Anim> animators;
-   private Coroutine c;
+   private bool c;
    [Editable] public string id;
 
    public override void Reset()
    {
       animators = new();
-      c = null;
+      c = false;
    }
 
    public override string Name => "Animate";
@@ -35,7 +36,13 @@ public class AnimateNode: Node
          newState.iterationId = 0;
          
          animators.Add(new() {b = bullet, s = newState, id = state.iterationId});
-         c = state.attached.GetComponent<MonoBehaviour>().StartCoroutine(Animate());
+         if (!c)
+         {
+            c = true;
+            
+            if (state.test) TestAnimate();
+            else state.attached.GetComponent<MonoBehaviour>().StartCoroutine(Animate());
+         }
          
          bullet = null;
       }
@@ -49,12 +56,13 @@ public class AnimateNode: Node
       public TreeStateData s;
       public int id;
    }
-   
    IEnumerator Animate()
    {
       float t = 0;
       float globalT = 0;
-      while (globalT < 10)
+      List<Anim> remove = new();
+      
+      while (globalT < maxAnimationLength && animators.Count > 0)
       {
          t += Time.deltaTime;
          globalT += Time.deltaTime;
@@ -64,6 +72,59 @@ public class AnimateNode: Node
             t -= 1f / 60;
             foreach (var a in animators)
             {
+               if (!a.b.main)
+               {
+                  remove.Add(a);
+                  continue;
+               }
+               
+               var next = GetConnection("output");
+               if (next.other)
+               {
+                  pos = a.b.startPos;
+                  dir = a.b.startDir;
+                  index = a.id;
+                  time = a.s.iterationId/60f;
+                  output = a.b;
+               
+                  next.other.Eval(a.s);
+                  a.s.iterationId++;
+               }
+               
+               foreach (var r in remove)
+               {
+                  animators.Remove(r);
+               }
+               remove.Clear();
+            }
+         }
+         yield return new WaitForSeconds(1f / 60);
+      }
+      
+      Debug.Log($"finished animation");
+   }
+   
+   async Awaitable TestAnimate()
+   {
+      float t = 0;
+      float globalT = 0;
+      List<Anim> remove = new();
+      
+      while (globalT < maxAnimationLength && animators.Count > 0)
+      {
+         t += 1/60f; //Time.dt
+         globalT += 1/60f;
+
+         while (t > 1f / 60)
+         {
+            t -= 1f / 60;
+            foreach (var a in animators)
+            {
+               if (!a.b.main)
+               {
+                  remove.Add(a);
+                  continue;
+               }
                var next = GetConnection("output");
                if (next.other)
                {
@@ -77,11 +138,16 @@ public class AnimateNode: Node
                   a.s.iterationId++;
                }
             }
+
+            foreach (var r in remove)
+            {
+               animators.Remove(r);
+            }
+            remove.Clear();
          }
-         
-         yield return new WaitForSeconds(0);
+         await Task.Delay(16);
       }
       
-      yield break;
+      Debug.Log($"finished animation");
    }
 }

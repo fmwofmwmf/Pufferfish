@@ -21,7 +21,7 @@ public class AnimateMoveNode: Node
    protected override TreeStateData Evaluate(TreeStateData state)
    {
        GetAllInputs(state);
-       Debug.Log(state.iterationId);
+       //Debug.Log(state.iterationId);
        input.main.transform.position = position;
 
        return state;

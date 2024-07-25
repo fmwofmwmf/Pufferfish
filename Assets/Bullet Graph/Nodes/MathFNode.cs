@@ -30,6 +30,12 @@ public class MathFNode: Node
          case Operation.multiply:
             output = float1 * float2;
             break;
+         case Operation.mod:
+            output = float1 % float2;
+            break;
+         case Operation.sinCos:
+            output = Mathf.Sin(Mathf.Deg2Rad * float1) + Mathf.Cos(Mathf.Deg2Rad * float2);
+            break;
          case Operation.divide:
             if (float2 != 0) output = float1 / float2;
             else output = 0;
@@ -44,6 +50,8 @@ public class MathFNode: Node
       add,
       subtract,
       multiply,
+      mod,
+      sinCos,
       divide
    }
 }
