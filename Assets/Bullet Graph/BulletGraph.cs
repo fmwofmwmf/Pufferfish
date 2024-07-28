@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.Callbacks;
@@ -10,21 +11,23 @@ using UnityEngine;
 public class BulletGraph : ScriptableObject
 {
     [SerializeReference] public List<Node> nodes = new();
-    [SerializeReference] public List<CustomEdge> edges = new();
-    
-    public Node CreateNode(Type type)
+    public List<CustomEdge> edges = new();
+
+    public Node CreateNode(Type type, Vector2 position)
     {
         Node node = CreateInstance(type) as Node;
+        node.graphPos = position;
+        node.Reset();
         node.name = type.Name;
         node.guid = GUID.Generate().ToString();
         nodes.Add(node);
         AssetDatabase.AddObjectToAsset(node, this);
         AssetDatabase.SaveAssets();
-        node.Start();
+        node.Reset();
         return node;
     }
 
-    public void Reset()
+    public void Reset() 
     {
         foreach (var n in nodes)
         {
@@ -35,7 +38,8 @@ public class BulletGraph : ScriptableObject
     public void DeleteNode(Node node)
     {
         nodes.Remove(node);
-        node.DetachAll();
+        node.DisconnectAll();
+        edges.RemoveAll(e=> e.inputNode == node || e.outputNode == node);
         AssetDatabase.RemoveObjectFromAsset(node);
         AssetDatabase.SaveAssets();
     }
@@ -48,8 +52,9 @@ public class BulletGraph : ScriptableObject
             return;
         }
         CustomPort p1 = inNode.FindInputPort(inPort);
-        CustomPort p2 = outNode.FindInputPort(outPort);
-        CustomEdge e = new CustomEdge(p1, p2);
+        CustomPort p2 = outNode.FindOutputPort(outPort);
+        CustomEdge e = new CustomEdge(this, p1, p2, inNode, outNode);
+        edges.Add(e);
         
         p1.Connect(e);
         p2.Connect(e);
@@ -57,8 +62,9 @@ public class BulletGraph : ScriptableObject
     public void Disconnect(Node inNode, Node outNode, string inPort, string outPort)
     {
         CustomPort p1 = inNode.FindInputPort(inPort);
-        CustomPort p2 = outNode.FindInputPort(outPort);
+        CustomPort p2 = outNode.FindOutputPort(outPort);
         CustomEdge e = p1.FindConnectedEdge(p2);
+        edges.Remove(e);
         p1.RemoveEdge(e);
         p2.RemoveEdge(e);
     }

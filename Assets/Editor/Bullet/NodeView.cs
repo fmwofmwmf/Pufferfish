@@ -14,43 +14,44 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
 {
     public Action<NodeView> OnNodeSelected;
     public Node Node;
-    public Dictionary<CustomPort, VisualPort> Ports;
+    public Dictionary<string, VisualPort> Ports;
     public BulletGraphView Graph;
     public NodeView(BulletGraphView g, Node node)
     {
         Node = node;
+        Graph = g;
         title = node.Name;
         viewDataKey = node.guid;
         style.overflow = Overflow.Visible;
         mainContainer.style.overflow = Overflow.Visible;
         style.left = node.graphPos.x;
         style.top = node.graphPos.y;
+        Ports = new();
         CreateButtons();
         CreateInputPorts();
         CreateOutputPorts();
-        
     }
 
     void CreateInputPorts()
     {
         foreach (var port in Node.inputPorts)
         {
-            var p = VisualPort.Create(Direction.Input, port.multi? Port.Capacity.Multi : Port.Capacity.Single, port.FieldType, Node);
+            var p = VisualPort.Create(Direction.Input, port.multi? Port.Capacity.Multi : Port.Capacity.Single, port, Node);
             if (port.Edges.Any()) p.Collapse();
-            p.portName = TypeName(port.FieldType);
-            Ports[port] = p;
+            p.port.portName = TypeName(port.displayName, port.FieldType);
+            Ports[port.fieldName] = p;
             inputContainer.Add(p);
         }
     }
     
     void CreateOutputPorts()
     {
-        foreach (var port in Node.inputPorts)
+        foreach (var port in Node.outputPorts)
         {
-            var p = VisualPort.Create(Direction.Input, port.multi? Port.Capacity.Multi : Port.Capacity.Single, port.FieldType, Node);
-            p.portName = TypeName(port.FieldType);
-            Ports[port] = p;
-            inputContainer.Add(p);
+            var p = VisualPort.Create(Direction.Output, port.multi? Port.Capacity.Multi : Port.Capacity.Single, port, Node);
+            p.port.portName = TypeName(port.displayName, port.FieldType);
+            Ports[port.fieldName] = p;
+            outputContainer.Add(p);
         }
     }
 
@@ -67,10 +68,10 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
 
     public void DisconnectAll()
     {
-        Ports.Values.ToList().ForEach(v => Graph.DeleteElements(v.connections));
+        Ports.Values.ToList().ForEach(v => Graph.DeleteElements(v.port.connections));
     }
 
-    string TypeName(Type f)
+    string TypeName(string fieldName, Type f)
     {
         string n;
         switch (f)
@@ -96,7 +97,7 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
         }
         
         TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
-        return $"{textInfo.ToTitleCase(f.Name)}({n})";
+        return $"{textInfo.ToTitleCase(fieldName)}({n})";
     }
 
     public override void SetPosition(Rect newPos)
@@ -116,25 +117,28 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
 }
 
 
-public class VisualPort : Port
+public class VisualPort : VisualElement
 {
+    public Port port;
     public VisualElement textField { get; private set; }
     public string Field;
 
-    private VisualPort(Direction portDirection, Capacity portCapacity, Type type, Node n) : base(Orientation.Horizontal, portDirection, portCapacity, type)
+    private VisualPort(Direction portDirection, Port.Capacity portCapacity, CustomPort attached, Node n)
     {
+        port = Port.Create<Edge>(Orientation.Horizontal, portDirection, portCapacity, attached.FieldType);
+        Add(port);
         style.overflow = Overflow.Visible;
-        Field = type.Name;
+        Field = attached.fieldName;
         if (portDirection == Direction.Input)
         {
-            textField = CreateField("Input", type, n);
+            textField = CreateField(attached.fieldName, attached.FieldType, n);
             if (textField != null) Add(textField);
         }
     }
     
-    public static VisualPort Create(Direction portDirection, Capacity portCapacity, Type type, Node n)
+    public static VisualPort Create(Direction portDirection, Port.Capacity portCapacity, CustomPort attached, Node n)
     {
-        return new VisualPort(portDirection, portCapacity, type, n);
+        return new VisualPort(portDirection, portCapacity, attached, n);
     }
 
     public void Collapse()

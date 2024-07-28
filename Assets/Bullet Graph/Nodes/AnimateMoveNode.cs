@@ -12,7 +12,7 @@ public class AnimateMoveNode: Node
    [Port(false)] public Vector3 position;
    [Port(false)] public Vector3 direction;
    [Editable] public string id;
-   public override void Reset()
+   public override void ClearState()
    {
        
    }

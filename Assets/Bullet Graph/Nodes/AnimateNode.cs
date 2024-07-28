@@ -18,7 +18,7 @@ public class AnimateNode: Node
    private bool c;
    [Editable] public string id;
 
-   public override void Reset()
+   public override void ClearState()
    {
       animators = new();
       c = false;

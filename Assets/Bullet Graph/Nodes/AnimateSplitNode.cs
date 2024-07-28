@@ -12,7 +12,7 @@ public class AnimateSplitNode: Node
    [Port(true, false, false)] public List<Bullet> o1, o2;
    [Editable] public string id;
 
-   public override void Reset()
+   public override void ClearState()
    {
       o1 = new();
       o2 = new();

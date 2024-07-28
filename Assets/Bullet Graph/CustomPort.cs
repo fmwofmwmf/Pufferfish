@@ -8,49 +8,55 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Serialization;
 [Serializable]
-public class CustomPort
+public struct CustomPort
 {
-    [NonSerialized] public BulletGraph Graph;
-    public Node owner;
     [NonSerialized] public List<CustomEdge> Edges;
     public Type FieldType;
     public DefaultValueHolder defaultValue;
-    private FieldInfo attachedField;
+    public FieldInfo AttachedField;
     public string fieldName;
     public string displayName;
     public bool input;
     public bool multi;
 
-    public CustomPort(Node owner, bool input, bool multi, FieldInfo info)
+    public void Reset(FieldInfo info)
     {
-        this.owner = owner;
-        attachedField = info;
         fieldName = info.Name;
-        this.input = input;
-        this.multi = multi;
-        
+        displayName = info.Name;
+        AttachedField = info;
+        FieldType = info.FieldType;
         Edges = new List<CustomEdge>();
     }
 
     public bool Connect(CustomEdge edge)
     {
         if (!multi) DisconnectAll();
+        EdgeCheck();
         Edges.Add(edge);
         return true;
     }
     
     public CustomEdge FindConnectedEdge(CustomPort other)
     {
-        return Edges.Find(e => input ? e.outputPort == other : e.inputPort == other);
+        bool i = input;
+        EdgeCheck();
+        return Edges.Find(e => (i ? e.OutputPort : e.InputPort).AttachedField == other.AttachedField);
     }
 
     public void DisconnectAll()
     {
+        EdgeCheck();
         Edges.ForEach(e => e.DeleteEdge());
     }
     
     public void RemoveEdge(CustomEdge edge)
     {
+        EdgeCheck();
         Edges.Remove(edge);
+    }
+
+    private void EdgeCheck()
+    {
+        if (Edges == null) Edges = new();
     }
 }

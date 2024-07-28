@@ -11,7 +11,7 @@ public class AnimateDelayNode: Node
    [Port(false)] public List<Bullet> bullet;
    [Port(false)] public List<Bullet> output;
    [Editable] public string id;
-   public override void Reset()
+   public override void ClearState()
    {
       output = new();
    }

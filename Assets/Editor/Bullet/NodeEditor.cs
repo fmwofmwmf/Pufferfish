@@ -11,6 +11,7 @@ public class NodeEditor: Editor
     public bool notAttached;
     public override void OnInspectorGUI()
     {
+        if (!serializedObject.targetObject) return;
         // Get the target object type
         var type = target.GetType();
 
@@ -35,6 +36,11 @@ public class NodeEditor: Editor
             {
                 Node n = serializedObject.targetObject as Node;
                 n.Reset();
+            }
+            if (GUILayout.Button("ClearState"))
+            {
+                Node n = serializedObject.targetObject as Node;
+                n.ClearState();
             }
         }
 

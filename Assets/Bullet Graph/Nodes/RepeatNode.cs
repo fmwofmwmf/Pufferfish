@@ -46,7 +46,7 @@ public class RepeatNode: Node
    }
    
 
-   public override void Reset()
+   public override void ClearState()
    {
       c = 0;
       stopProp = false;

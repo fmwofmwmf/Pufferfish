@@ -3,41 +3,55 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 [Serializable]
 public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
 {
     public abstract string Name { get; }
-    [HideInInspector] public string guid;
+    [Editable] public string guid;
     [HideInInspector] public Vector2 graphPos;
     
-    public List<CustomPort> inputPorts;
-    public List<CustomPort> outputPorts;
+    [Editable] public List<CustomPort> inputPorts = new();
+    [Editable] public List<CustomPort> outputPorts = new();
     private Dictionary<string, FieldInfo> nodeFields;
     private int iterationId, activationId;
     
-    public void Start()
+    public virtual void ClearState()
     {
+         
+    }
+
+    public void Reset()
+    {
+        DisconnectAll();
+        inputPorts.Clear();
+        outputPorts.Clear();
         foreach (var f in nodeFields.Values)
         {
             var o = f.GetCustomAttribute<PortAttribute>();
-            if (o.output)
-            {
-                outputPorts.Add(new CustomPort(this, true, o.multi, f));
-            }
-            else
-            {
-                inputPorts.Add(new CustomPort(this, false, o.multi, f));
-            }
+            var l = o.Output ? outputPorts : inputPorts;
+            l.Add(AddPort(o.multi, f.Name, f, !o.Output));
         }
+        ClearState();
     }
-    
-    public Node()
+
+    private CustomPort AddPort(bool multi, string n, FieldInfo f, bool input)
+    {
+        return new CustomPort
+        {
+            Edges = new List<CustomEdge>(), multi = multi, defaultValue = new DefaultValueHolder(), fieldName = f.Name,
+            FieldType = f.FieldType, displayName = n, input = input
+        };
+    }
+
+    protected Node()
     {
         nodeFields = GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-            .Where(f => f.GetCustomAttribute<PortAttribute>() != null).ToDictionary( f=> f.Name, f => f);
+            .Where(f => f.GetCustomAttribute<PortAttribute>() != null).ToDictionary( k=> k.Name, k => k);
     }
 
     public TreeStateData Eval(TreeStateData state)
@@ -52,9 +66,31 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
         return state;
     }
     protected abstract TreeStateData Evaluate(TreeStateData state);
+    
+    public Action<Node> CreateTransferDelegate()
+    {
+        var sourceParameter = Expression.Parameter(typeof(Node), "source");
+        var targetParameter = Expression.Parameter(typeof(Node), "target");
+        var expressions = new List<Expression>();
 
-    public virtual void Reset() {}
+        foreach (var p in inputPorts)
+        {
+            if (p.Edges.Any())
+            {
+                var get = p.Edges[0];
+                
+                var sourceField = Expression.Field(sourceParameter, get.InputPort.AttachedField);
+                var targetField = Expression.Field(targetParameter, get.OutputPort.AttachedField);
+                var assignExpression = Expression.Assign(targetField, sourceField);
+                expressions.Add(assignExpression);
+            }
+        }
 
+        var body = Expression.Block(expressions);
+        var lambda = Expression.Lambda<Action<Node>>(body, sourceParameter, targetParameter);
+        return lambda.Compile();
+    }
+    
     protected TreeStateData GetAllInputs(TreeStateData state)
     {
         // var s = new HashSet<ConnectedPort>();
@@ -91,7 +127,7 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
         return new();
     }
 
-    public void DetachAll()
+    public void DisconnectAll()
     {
         inputPorts.ForEach(p => p.DisconnectAll());
         outputPorts.ForEach(p => p.DisconnectAll());
@@ -140,8 +176,28 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     
     public void OnAfterDeserialize()
     {
-        Start();
+        nodeFields = GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+            .Where(f => f.GetCustomAttribute<PortAttribute>() != null).ToDictionary( k=> k.Name, k => k);
+        
+        bool ok = true;
+        inputPorts.ForEach(p =>
+        { 
+            if (nodeFields.TryGetValue(p.fieldName, out FieldInfo f)) p.Reset(f);
+            else
+            {
+                ok = false; 
+            }
+        });
+        outputPorts.ForEach(p => 
+        {
+            if (nodeFields.TryGetValue(p.fieldName, out FieldInfo f)) p.Reset(f);
+            else {ok = false;}
+        });
+        Debug.Log(ok);
+        if (ok || inputPorts.Count + outputPorts.Count != nodeFields.Count) Reset();
     }
+    
+    
 
     public struct TreeStateData
     {

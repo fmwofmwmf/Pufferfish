@@ -8,25 +8,25 @@ using UnityEngine.UIElements;
 [AttributeUsage(AttributeTargets.Field)]
 public class PortAttribute : Attribute
 {
-    public bool output;
+    public bool Output;
     public bool readOnly;
     public bool multi;
 
     public PortAttribute(bool output)
     {
-        this.output = output;
+        this.Output = output;
         readOnly = false;
-        multi = true;
+        multi = output;
     }
     public PortAttribute(bool output, bool read)
     {
-        this.output = output;
+        this.Output = output;
         readOnly = read;
-        multi = true;
+        multi = output;
     }
     public PortAttribute(bool output, bool read, bool multi)
     {
-        this.output = output;
+        this.Output = output;
         readOnly = read;
         this.multi = multi;
     }

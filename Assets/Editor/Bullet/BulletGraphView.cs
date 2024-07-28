@@ -37,19 +37,28 @@ public class BulletGraphView : GraphView
       graphViewChanged += OnGraphViewChanged;
       
       graph.nodes.ForEach(node => CreateNodeView(node));
-      graph.edges.ForEach(edge =>
+
+      List<CustomEdge> del = new List<CustomEdge>();
+      foreach (var edge in graph.edges)
       {
-         CustomPort inPort = edge.inputPort;
-         CustomPort outPort = edge.outputPort;
+         if (edge.remove)
+         {
+            del.Add(edge);
+            continue;
+         }
+         CustomPort inPort = edge.InputPort;
+         CustomPort outPort = edge.OutputPort;
+         
          inPort.Connect(edge);
          outPort.Connect(edge);
-         
-         Port ip = FindNodeView(inPort.owner).Ports[inPort];
-         Port op = FindNodeView(outPort.owner).Ports[outPort];
+
+         Port ip = FindNodeView(edge.inputNode).Ports[inPort.fieldName].port;
+         Port op = FindNodeView(edge.outputNode).Ports[outPort.fieldName].port;
          
          Edge e = ip.ConnectTo(op);
          AddElement(e);
-      });
+      }
+      del.ForEach(e => graph.edges.Remove(e));
    }
 
    NodeView FindNodeView(Node node)
@@ -71,23 +80,26 @@ public class BulletGraphView : GraphView
    {
       if (graphviewchange.elementsToRemove != null)
       {
-         foreach (var elem in graphviewchange.elementsToRemove)
+         for (int i = graphviewchange.elementsToRemove.Count - 1; i >= 0; i--)
          {
+            var elem = graphviewchange.elementsToRemove[i];
             if (elem is NodeView n)
             {
                n.DisconnectAll();
                currentGraph.DeleteNode(n.Node);
+               RemoveElement(n);
             } 
             else if (elem is Edge e)
             {
                NodeView n1 = e.input.node as NodeView;
                NodeView n2 = e.output.node as NodeView;
-               
-               VisualPort p1 = e.input as VisualPort;
-               VisualPort p2 = e.output as VisualPort;
-               
+            
+               VisualPort p1 = e.input.parent as VisualPort;
+               VisualPort p2 = e.output.parent as VisualPort;
+            
                p1.UnCollapse();
                currentGraph.Disconnect(n1.Node, n2.Node, p1.Field, p2.Field);
+               RemoveElement(e);
             }
          }
       }
@@ -99,8 +111,8 @@ public class BulletGraphView : GraphView
             NodeView n1 = edge.input.node as NodeView;
             NodeView n2 = edge.output.node as NodeView;
                
-            VisualPort p1 = edge.input as VisualPort;
-            VisualPort p2 = edge.output as VisualPort;
+            VisualPort p1 = edge.input.parent as VisualPort;
+            VisualPort p2 = edge.output.parent as VisualPort;
             
             p2.Collapse();
             currentGraph.Connect(n1.Node, n2.Node, p1.Field, p2.Field);
@@ -113,24 +125,30 @@ public class BulletGraphView : GraphView
    {
       {
          var types = TypeCache.GetTypesDerivedFrom<Node>();
+
+         Vector2 position = evt.mousePosition;
+         
+         position.x = (position.x - contentViewContainer.worldBound.x) / scale;
+         position.y = (position.y - contentViewContainer.worldBound.y) / scale;
+         
          foreach (var t in types)
          {
             if (t.GetCustomAttribute(typeof(NodeAttribute)) is NodeAttribute s)
             {
-               evt.menu.AppendAction($"{s.path}/{t.Name}", _ => CreateNode(t));
+               evt.menu.AppendAction($"{s.path}/{t.Name}", _ => CreateNode(t, position));
             }
             else
             {
-               evt.menu.AppendAction($"{t.Name}", _ => CreateNode(t));
+               evt.menu.AppendAction($"{t.Name}", _ => CreateNode(t, position));
             }
             
          }
       }
    }
 
-   void CreateNode(Type type)
+   void CreateNode(Type type, Vector2 position)
    {
-      Node node = currentGraph.CreateNode(type);
+      Node node = currentGraph.CreateNode(type, position);
       CreateNodeView(node);
    }
 
