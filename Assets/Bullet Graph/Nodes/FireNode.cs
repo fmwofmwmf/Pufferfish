@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class FireNode: Node
 {
-   [Port(true, true)] public Bullet output;
+   [PortDecorator(CustomPort.Style.square)] [Port(true, true)] public Bullet output;
    [Port(false)] public GameObject bullet;
    [Port(false)] public Vector3 position;
    [Port(false)] public Vector3 direction;

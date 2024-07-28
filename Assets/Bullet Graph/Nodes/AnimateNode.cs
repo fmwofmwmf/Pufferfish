@@ -9,8 +9,8 @@ using Random = UnityEngine.Random;
 [Node("Animate")]
 public class AnimateNode: Node
 {
-   [Port(false)] public Bullet bullet;
-   [Port(true, true)] public Bullet output;
+   [PortDecorator(CustomPort.Style.square)] [Port(false)] public Bullet bullet;
+   [PortDecorator(CustomPort.Style.cap)] [Port(true, true)] public Bullet output;
    [Port(true, true)] public Vector3 pos, dir;
    [Port(true, true)] public float index, time;
    [Editable] public int maxAnimationLength;

@@ -52,8 +52,8 @@ public class BulletGraphView : GraphView
          inPort.Connect(edge);
          outPort.Connect(edge);
 
-         Port ip = FindNodeView(edge.inputNode).Ports[inPort.fieldName].port;
-         Port op = FindNodeView(edge.outputNode).Ports[outPort.fieldName].port;
+         Port ip = FindNodeView(edge.inputNode).Ports[edge.inName].port;
+         Port op = FindNodeView(edge.outputNode).Ports[edge.outName].port;
          
          Edge e = ip.ConnectTo(op);
          AddElement(e);
@@ -73,7 +73,14 @@ public class BulletGraphView : GraphView
    
    public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
    {
-      return ports.ToList().Where(end => end.node != startPort.node && end.portType == startPort.portType && end.direction != startPort.direction).ToList();
+      return ports.ToList().Where(end =>
+      {
+         VisualPort e = end.parent as VisualPort;
+         VisualPort s = startPort.parent as VisualPort;
+         
+         return e != null && s != null && end.node != startPort.node && end.portType == startPort.portType &&
+                end.direction != startPort.direction && e.Shape == s.Shape;
+      }).ToList();
    }
 
    private GraphViewChange OnGraphViewChanged(GraphViewChange graphviewchange)

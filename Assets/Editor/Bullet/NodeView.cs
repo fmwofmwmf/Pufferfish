@@ -122,10 +122,45 @@ public class VisualPort : VisualElement
     public Port port;
     public VisualElement textField { get; private set; }
     public string Field;
+    public CustomPort.Style Shape;
 
     private VisualPort(Direction portDirection, Port.Capacity portCapacity, CustomPort attached, Node n)
     {
         port = Port.Create<Edge>(Orientation.Horizontal, portDirection, portCapacity, attached.FieldType);
+
+        Shape = attached.shape;
+        if (Shape == CustomPort.Style.square)
+        {
+            var v = port.Children().ToArray()[0];
+            var vc = v.Children().ToArray()[0];
+            v.style.borderBottomLeftRadius = 0;
+            v.style.borderBottomRightRadius = 0;
+            v.style.borderTopLeftRadius = 0;
+            v.style.borderTopRightRadius = 0;
+            vc.style.borderBottomLeftRadius = 0;
+            vc.style.borderBottomRightRadius = 0;
+            vc.style.borderTopLeftRadius = 0;
+            vc.style.borderTopRightRadius = 0;
+        } else if (Shape == CustomPort.Style.cap)
+        {
+            var v = port.Children().ToArray()[0];
+            var vc = v.Children().ToArray()[0];
+            if (attached.input)
+            {
+                v.style.borderBottomLeftRadius = 0;
+                v.style.borderTopLeftRadius = 0;
+                vc.style.borderBottomLeftRadius = 0;
+                vc.style.borderTopLeftRadius = 0;
+            }
+            else
+            {
+                v.style.borderTopRightRadius = 0;
+                v.style.borderBottomRightRadius = 0;
+                vc.style.borderBottomRightRadius = 0;
+                vc.style.borderTopRightRadius = 0;
+            }
+        }
+        
         Add(port);
         style.overflow = Overflow.Visible;
         Field = attached.fieldName;

@@ -33,6 +33,17 @@ public class PortAttribute : Attribute
 }
 
 [AttributeUsage(AttributeTargets.Field)]
+public class PortDecoratorAttribute : Attribute
+{
+    public CustomPort.Style Shape;
+    public PortDecoratorAttribute(CustomPort.Style s)
+    {
+        Shape = s;
+    }
+    
+}
+
+[AttributeUsage(AttributeTargets.Field)]
 public class EditableAttribute : Attribute
 {
 }

@@ -18,6 +18,7 @@ public struct CustomPort
     public string displayName;
     public bool input;
     public bool multi;
+    public Style shape;
 
     public void Reset(FieldInfo info)
     {
@@ -58,5 +59,12 @@ public struct CustomPort
     private void EdgeCheck()
     {
         if (Edges == null) Edges = new();
+    }
+    
+    public enum Style
+    {
+        round,
+        square,
+        cap
     }
 }

@@ -7,11 +7,11 @@ using UnityEngine;
 
 [Node("Animate")]
 public class AnimateMoveNode: Node
-{
-   [Port(false)] public Bullet input;
-   [Port(false)] public Vector3 position;
-   [Port(false)] public Vector3 direction;
-   [Editable] public string id;
+{ 
+    [PortDecorator(CustomPort.Style.cap)] [Port(false)] public Bullet input; 
+    [Port(false)] public Vector3 position; 
+    [Port(false)] public Vector3 direction;
+    [Editable] public string id;
    public override void ClearState()
    {
        

@@ -33,18 +33,19 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
         foreach (var f in nodeFields.Values)
         {
             var o = f.GetCustomAttribute<PortAttribute>();
+            var s = f.GetCustomAttribute<PortDecoratorAttribute>();
             var l = o.Output ? outputPorts : inputPorts;
-            l.Add(AddPort(o.multi, f.Name, f, !o.Output));
+            l.Add(AddPort(o.multi, f.Name, f, !o.Output, s?.Shape ?? CustomPort.Style.round));
         }
         ClearState();
     }
 
-    private CustomPort AddPort(bool multi, string n, FieldInfo f, bool input)
+    private CustomPort AddPort(bool multi, string n, FieldInfo f, bool input, CustomPort.Style s)
     {
         return new CustomPort
         {
             Edges = new List<CustomEdge>(), multi = multi, defaultValue = new DefaultValueHolder(), fieldName = f.Name,
-            FieldType = f.FieldType, displayName = n, input = input
+            FieldType = f.FieldType, displayName = n, input = input, shape = s
         };
     }
 

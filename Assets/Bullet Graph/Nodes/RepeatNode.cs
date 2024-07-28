@@ -6,11 +6,13 @@ using UnityEngine;
 
 [Node("Timing")]
 public class RepeatNode: Node
-{
-   [Port(false)] public float max, min, increment, linkIn;
+{ 
+   [PortDecorator(CustomPort.Style.square)] [Port(false)] public float linkIn;
+   [PortDecorator(CustomPort.Style.square)] [Port(true)] public float linkOut;
+   [Port(false)] public float max, min, increment;
    [Port(true)] public float f;
    [Port(true, true)] public float readF;
-   [Port(true)] public float linkOut;
+   
    private float c;
    private bool stopProp;
    private TreeState lastUpstream;
