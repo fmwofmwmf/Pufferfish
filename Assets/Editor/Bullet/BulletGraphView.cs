@@ -36,33 +36,28 @@ public class BulletGraphView : GraphView
       DeleteElements(graphElements);
       graphViewChanged += OnGraphViewChanged;
       
-      graph.nodes.ForEach(n => CreateNodeView(n));
-      graph.nodes.ForEach(n =>
+      graph.nodes.ForEach(node => CreateNodeView(node));
+      graph.edges.ForEach(edge =>
       {
-         var nv = FindNodeView(n);
+         CustomPort inPort = edge.inputPort;
+         CustomPort outPort = edge.outputPort;
+         inPort.Connect(edge);
+         outPort.Connect(edge);
          
-         var fields = n.GetAllFields();
-         foreach (var f in fields)
-         {
-            var port = nv.connections[f];
-            var otherPort = n.GetConnection(f.Name);
-            if (port.port.direction == Direction.Input && otherPort != null && otherPort.field != "")
-            {
-               var othernv = FindNodeView(otherPort.other);
-               
-               var otherField = othernv.node.GetAllFields().Find(f => f.Name == otherPort.field);
-               
-               var otherVPort = othernv.connections[otherField];
-               port.Collapse(); 
-               Edge e = otherVPort.port.ConnectTo(port.port);
-               AddElement(e);
-            }
-         }
+         Port ip = FindNodeView(inPort.owner).Ports[inPort];
+         Port op = FindNodeView(outPort.owner).Ports[outPort];
          
+         Edge e = ip.ConnectTo(op);
+         AddElement(e);
       });
    }
 
    NodeView FindNodeView(Node node)
+   {
+      return GetNodeByGuid(node.guid) as NodeView;
+   }
+   
+   NodeView FindPort(Node node)
    {
       return GetNodeByGuid(node.guid) as NodeView;
    }
@@ -80,25 +75,19 @@ public class BulletGraphView : GraphView
          {
             if (elem is NodeView n)
             {
-               foreach (var p in n.connections2.Keys)
-               {
-                  foreach (var e in p.connections)
-                  {
-                     if (e.parent != null) e.parent.Remove(e);
-                  }
-               }
-
-               currentGraph.DeleteNode(n.node);
-            } else if (elem is Edge e)
+               n.DisconnectAll();
+               currentGraph.DeleteNode(n.Node);
+            } 
+            else if (elem is Edge e)
             {
-               NodeView n1 = e.output.node as NodeView;
-               NodeView n2 = e.input.node as NodeView;
-               var f1 = n1.connections2[e.output];
-               var f2 = n2.connections2[e.input];
-               var c1 = n1.connections[f1];
-               var c2 = n2.connections[f2];
-               c2.UnCollapse();
-               currentGraph.Disconnect(n1.node, n2.node, f1, f2);
+               NodeView n1 = e.input.node as NodeView;
+               NodeView n2 = e.output.node as NodeView;
+               
+               VisualPort p1 = e.input as VisualPort;
+               VisualPort p2 = e.output as VisualPort;
+               
+               p1.UnCollapse();
+               currentGraph.Disconnect(n1.Node, n2.Node, p1.Field, p2.Field);
             }
          }
       }
@@ -107,14 +96,14 @@ public class BulletGraphView : GraphView
       {
          graphviewchange.edgesToCreate.ForEach(edge =>
          {
-            NodeView n1 = edge.output.node as NodeView;
-            NodeView n2 = edge.input.node as NodeView;
-            var f1 = n1.connections2[edge.output];
-            var f2 = n2.connections2[edge.input];
-            var c1 = n1.connections[f1];
-            var c2 = n2.connections[f2];
-            c2.Collapse();
-            currentGraph.Connect(n1.node, n2.node, f1, f2);
+            NodeView n1 = edge.input.node as NodeView;
+            NodeView n2 = edge.output.node as NodeView;
+               
+            VisualPort p1 = edge.input as VisualPort;
+            VisualPort p2 = edge.output as VisualPort;
+            
+            p2.Collapse();
+            currentGraph.Connect(n1.Node, n2.Node, p1.Field, p2.Field);
          });
       }
       return graphviewchange;
@@ -147,8 +136,8 @@ public class BulletGraphView : GraphView
 
    void CreateNodeView(Node node)
    {
-      NodeView nodeView = new(node);
-      nodeView.onNodeSelected = onNodeSelected;
+      NodeView nodeView = new(this, node);
+      nodeView.OnNodeSelected = onNodeSelected;
       AddElement(nodeView);
    }
 }

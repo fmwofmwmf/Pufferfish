@@ -58,96 +58,97 @@ public class AnimateNode: Node
    }
    IEnumerator Animate()
    {
-      float t = 0;
-      float globalT = 0;
-      List<Anim> remove = new();
-      
-      while (globalT < maxAnimationLength && animators.Count > 0)
-      {
-         t += Time.deltaTime;
-         globalT += Time.deltaTime;
-
-         while (t > 1f / 60)
-         {
-            t -= 1f / 60;
-            foreach (var a in animators)
-            {
-               if (!a.b.main)
-               {
-                  remove.Add(a);
-                  continue;
-               }
-               
-               var next = GetConnection("output");
-               if (next.other)
-               {
-                  pos = a.b.startPos;
-                  dir = a.b.startDir;
-                  index = a.id;
-                  time = a.s.iterationId/60f;
-                  output = a.b;
-               
-                  next.other.Eval(a.s);
-                  a.s.iterationId++;
-               }
-               
-               foreach (var r in remove)
-               {
-                  animators.Remove(r);
-               }
-               remove.Clear();
-            }
-         }
-         yield return new WaitForSeconds(1f / 60);
-      }
-      
-      Debug.Log($"finished animation");
+      // float t = 0;
+      // float globalT = 0;
+      // List<Anim> remove = new();
+      //
+      // while (globalT < maxAnimationLength && animators.Count > 0)
+      // {
+      //    t += Time.deltaTime;
+      //    globalT += Time.deltaTime;
+      //
+      //    while (t > 1f / 60)
+      //    {
+      //       t -= 1f / 60;
+      //       foreach (var a in animators)
+      //       {
+      //          if (!a.b.main)
+      //          {
+      //             remove.Add(a);
+      //             continue;
+      //          }
+      //          
+      //          var next = GetConnection("output");
+      //          if (next.other)
+      //          {
+      //             pos = a.b.startPos;
+      //             dir = a.b.startDir;
+      //             index = a.id;
+      //             time = a.s.iterationId/60f;
+      //             output = a.b;
+      //          
+      //             next.other.Eval(a.s);
+      //             a.s.iterationId++;
+      //          }
+      //          
+      //          foreach (var r in remove)
+      //          {
+      //             animators.Remove(r);
+      //          }
+      //          remove.Clear();
+      //       }
+      //    }
+      //    yield return new WaitForSeconds(1f / 60);
+      // }
+      //
+      // Debug.Log($"finished animation");
+      yield break;
    }
    
    async Awaitable TestAnimate()
    {
-      float t = 0;
-      float globalT = 0;
-      List<Anim> remove = new();
-      
-      while (globalT < maxAnimationLength && animators.Count > 0)
-      {
-         t += 1/60f; //Time.dt
-         globalT += 1/60f;
-
-         while (t > 1f / 60)
-         {
-            t -= 1f / 60;
-            foreach (var a in animators)
-            {
-               if (!a.b.main)
-               {
-                  remove.Add(a);
-                  continue;
-               }
-               var next = GetConnection("output");
-               if (next.other)
-               {
-                  pos = a.b.startPos;
-                  dir = a.b.startDir;
-                  index = a.id;
-                  time = a.s.iterationId/60f;
-                  output = a.b;
-               
-                  next.other.Eval(a.s);
-                  a.s.iterationId++;
-               }
-            }
-
-            foreach (var r in remove)
-            {
-               animators.Remove(r);
-            }
-            remove.Clear();
-         }
-         await Task.Delay(16);
-      }
-      
-      Debug.Log($"finished animation");
+      // float t = 0;
+      // float globalT = 0;
+      // List<Anim> remove = new();
+      //
+      // while (globalT < maxAnimationLength && animators.Count > 0)
+      // {
+      //    t += 1/60f; //Time.dt
+      //    globalT += 1/60f;
+      //
+      //    while (t > 1f / 60)
+      //    {
+      //       t -= 1f / 60;
+      //       foreach (var a in animators)
+      //       {
+      //          if (!a.b.main)
+      //          {
+      //             remove.Add(a);
+      //             continue;
+      //          }
+      //          var next = GetConnection("output");
+      //          if (next.other)
+      //          {
+      //             pos = a.b.startPos;
+      //             dir = a.b.startDir;
+      //             index = a.id;
+      //             time = a.s.iterationId/60f;
+      //             output = a.b;
+      //          
+      //             next.other.Eval(a.s);
+      //             a.s.iterationId++;
+      //          }
+      //       }
+      //
+      //       foreach (var r in remove)
+      //       {
+      //          animators.Remove(r);
+      //       }
+      //       remove.Clear();
+      //    }
+      //    await Task.Delay(16);
+      // }
+      //
+      // Debug.Log($"finished animation");
    }
 }

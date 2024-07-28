@@ -20,7 +20,7 @@ public class BulletInspectorView : VisualElement
    {
       Clear(); 
       Object.DestroyImmediate(editor);
-      editor = (NodeEditor)Editor.CreateEditor(node.node, typeof(NodeEditor));
+      editor = (NodeEditor)Editor.CreateEditor(node.Node, typeof(NodeEditor));
       editor.notAttached = true;
       IMGUIContainer container = new IMGUIContainer(() => { editor.OnInspectorGUI(); });
       Add(container);

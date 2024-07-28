@@ -9,8 +9,9 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class BulletGraph : ScriptableObject
 {
-    public List<Node> nodes = new();
-
+    [SerializeReference] public List<Node> nodes = new();
+    [SerializeReference] public List<CustomEdge> edges = new();
+    
     public Node CreateNode(Type type)
     {
         Node node = CreateInstance(type) as Node;
@@ -39,18 +40,26 @@ public class BulletGraph : ScriptableObject
         AssetDatabase.SaveAssets();
     }
 
-    public void Connect(Node node1, Node node2, FieldInfo port1, FieldInfo port2)
+    public void Connect(Node inNode, Node outNode, string inPort, string outPort)
     {
-        node1.Connect(port1, port2, node2);
-        node2.Connect(port2, port1, node1);
-    }
-    public void Disconnect(Node node1, Node node2, FieldInfo port1, FieldInfo port2)
-    {
-        node1.Disconnect(port1.Name);
-        node2.Disconnect(port2.Name);
-    }
-    public void GetConnected(Node node)
-    {
+        if (inNode == outNode)
+        {
+            Debug.Log("Do not connect a node to itself!");
+            return;
+        }
+        CustomPort p1 = inNode.FindInputPort(inPort);
+        CustomPort p2 = outNode.FindInputPort(outPort);
+        CustomEdge e = new CustomEdge(p1, p2);
         
+        p1.Connect(e);
+        p2.Connect(e);
+    }
+    public void Disconnect(Node inNode, Node outNode, string inPort, string outPort)
+    {
+        CustomPort p1 = inNode.FindInputPort(inPort);
+        CustomPort p2 = outNode.FindInputPort(outPort);
+        CustomEdge e = p1.FindConnectedEdge(p2);
+        p1.RemoveEdge(e);
+        p2.RemoveEdge(e);
     }
 }

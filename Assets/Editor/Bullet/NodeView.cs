@@ -12,14 +12,13 @@ using UnityEngine.UIElements;
 
 public class NodeView : UnityEditor.Experimental.GraphView.Node
 {
-    public Action<NodeView> onNodeSelected;
-    public Node node;
-
-    public readonly Dictionary<FieldInfo, CustomPort> connections = new Dictionary<FieldInfo, CustomPort>();
-    public readonly Dictionary<Port, FieldInfo> connections2 = new Dictionary<Port, FieldInfo>();
-    public NodeView(Node node)
+    public Action<NodeView> OnNodeSelected;
+    public Node Node;
+    public Dictionary<CustomPort, VisualPort> Ports;
+    public BulletGraphView Graph;
+    public NodeView(BulletGraphView g, Node node)
     {
-        this.node = node;
+        Node = node;
         title = node.Name;
         viewDataKey = node.guid;
         style.overflow = Overflow.Visible;
@@ -34,42 +33,30 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
 
     void CreateInputPorts()
     {
-        var fields = node.GetAllFields()
-            .Where(f => f.GetCustomAttribute<PortAttribute>().output == false);
-
-        foreach (var field in fields)
+        foreach (var port in Node.inputPorts)
         {
-            var b = field.GetCustomAttribute<PortAttribute>().right;
-            var p = CustomPort.Create(Direction.Input, b? Port.Capacity.Multi : Port.Capacity.Single, field, node);
-            connections[field] = p;
-            connections2[p.port] = field;
-            if (p.port.connections.Any()) p.Collapse();
-            p.port.portName = TypeName(field);
-            
+            var p = VisualPort.Create(Direction.Input, port.multi? Port.Capacity.Multi : Port.Capacity.Single, port.FieldType, Node);
+            if (port.Edges.Any()) p.Collapse();
+            p.portName = TypeName(port.FieldType);
+            Ports[port] = p;
             inputContainer.Add(p);
         }
     }
     
     void CreateOutputPorts()
     {
-        var fields = node.GetAllFields()
-            .Where(f => f.GetCustomAttribute<PortAttribute>().output == true);
-        
-        foreach (var field in fields)
+        foreach (var port in Node.inputPorts)
         {
-            var b = field.GetCustomAttribute<PortAttribute>().right;
-            var p = CustomPort.Create(Direction.Output, b? Port.Capacity.Multi : Port.Capacity.Single, field, node);
-            connections[field] = p;
-            connections2[p.port] = field;
-            p.port.portName = TypeName(field);
-            p.Collapse();
-            outputContainer.Add(p);
+            var p = VisualPort.Create(Direction.Input, port.multi? Port.Capacity.Multi : Port.Capacity.Single, port.FieldType, Node);
+            p.portName = TypeName(port.FieldType);
+            Ports[port] = p;
+            inputContainer.Add(p);
         }
     }
 
     void CreateButtons()
     {
-        var editor = Editor.CreateEditor(node, typeof(NodeEditor));
+        var editor = Editor.CreateEditor(Node, typeof(NodeEditor));
         IMGUIContainer container = new IMGUIContainer(() =>
         {
             editor.OnInspectorGUI();
@@ -78,10 +65,15 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
         Add(container);
     }
 
-    string TypeName(FieldInfo f)
+    public void DisconnectAll()
+    {
+        Ports.Values.ToList().ForEach(v => Graph.DeleteElements(v.connections));
+    }
+
+    string TypeName(Type f)
     {
         string n;
-        switch (f.FieldType)
+        switch (f)
         {
             case { } t when t == typeof(string):
                 n = "str";
@@ -99,7 +91,7 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
                 n = "3";
                 break;
             default:
-                n = f.FieldType.Name;
+                n = f.Name;
                 break;
         }
         
@@ -110,37 +102,39 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
     public override void SetPosition(Rect newPos)
     {
         base.SetPosition(newPos);
-        node.graphPos = newPos.min;
+        Node.graphPos = newPos.min;
     }
 
     public override void OnSelected()
     {
         base.OnSelected();
-        if (onNodeSelected != null)
+        if (OnNodeSelected != null)
         {
-            onNodeSelected.Invoke(this);
+            OnNodeSelected.Invoke(this);
         }
     }
 }
 
 
-public class CustomPort : VisualElement
+public class VisualPort : Port
 {
-    public Port port { get; private set; }
     public VisualElement textField { get; private set; }
+    public string Field;
 
-    public CustomPort(Direction portDirection, Port.Capacity portCapacity, FieldInfo type, Node n)
+    private VisualPort(Direction portDirection, Capacity portCapacity, Type type, Node n) : base(Orientation.Horizontal, portDirection, portCapacity, type)
     {
-        port = Port.Create<Edge>(Orientation.Horizontal, portDirection, portCapacity, type.FieldType);
         style.overflow = Overflow.Visible;
+        Field = type.Name;
         if (portDirection == Direction.Input)
         {
             textField = CreateField("Input", type, n);
             if (textField != null) Add(textField);
         }
-
-        Add(port);
-        
+    }
+    
+    public static VisualPort Create(Direction portDirection, Capacity portCapacity, Type type, Node n)
+    {
+        return new VisualPort(portDirection, portCapacity, type, n);
     }
 
     public void Collapse()
@@ -153,7 +147,7 @@ public class CustomPort : VisualElement
         if (textField != null) textField.visible = true;
     }
 
-    private VisualElement CreateField(string portName, FieldInfo f, Node n)
+    private VisualElement CreateField(string portName, Type fieldType, Node n)
     {
         VisualElement fieldContainer = new VisualElement();
         fieldContainer.style.overflow = Overflow.Visible;
@@ -167,9 +161,8 @@ public class CustomPort : VisualElement
         fieldContainer.style.paddingLeft = 3;
         fieldContainer.style.paddingRight = 3;
         // Create a field based on port name or any other logic
-
-        var fieldType = f.FieldType;
-        var p = n.GetConnection(f.Name);
+        
+        CustomPort p = n.FindInputPort(portName);
         if (fieldType == typeof(int))
         {
             IntegerField inputField = new IntegerField();
@@ -177,7 +170,7 @@ public class CustomPort : VisualElement
             
             inputField.value = (int)p.defaultValue.ExtractValue(typeof(int));
             fieldContainer.Add(new Label("Int"));
-            inputField.RegisterValueChangedCallback(evt => n.UpdateDefault(f, evt.newValue));
+            inputField.RegisterValueChangedCallback(evt => p.defaultValue.intValue = evt.newValue);
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -60; // Adjust as needed
         }
@@ -187,7 +180,7 @@ public class CustomPort : VisualElement
 
             inputField.value = (float)p.defaultValue.ExtractValue(typeof(float));
             fieldContainer.Add(new Label("Float"));
-            inputField.RegisterValueChangedCallback(evt => n.UpdateDefault(f, evt.newValue));
+            inputField.RegisterValueChangedCallback(evt=> p.defaultValue.floatValue = evt.newValue);
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -60; // Adjust as needed
         }
@@ -197,7 +190,7 @@ public class CustomPort : VisualElement
             
             inputField.value = (string)p.defaultValue.ExtractValue(typeof(string));
             fieldContainer.Add(new Label("String"));
-            inputField.RegisterValueChangedCallback(evt => n.UpdateDefault(f, evt.newValue));
+            inputField.RegisterValueChangedCallback(evt => p.defaultValue.stringValue = evt.newValue);
             fieldContainer.Add(inputField);
         }
         else if (fieldType == typeof(bool))
@@ -206,7 +199,7 @@ public class CustomPort : VisualElement
             
             inputField.value = (bool)p.defaultValue.ExtractValue(typeof(bool));
             fieldContainer.Add(new Label("Boolean"));
-            inputField.RegisterValueChangedCallback(evt => n.UpdateDefault(f, evt.newValue));
+            inputField.RegisterValueChangedCallback(evt => p.defaultValue.boolValue = evt.newValue);
             fieldContainer.Add(inputField);
         }
         else if (fieldType == typeof(Vector2))
@@ -215,7 +208,7 @@ public class CustomPort : VisualElement
             
             inputField.value = (Vector2)p.defaultValue.ExtractValue(typeof(Vector2));
             fieldContainer.Add(new Label("(2)"));
-            inputField.RegisterValueChangedCallback(evt => n.UpdateDefault(f, evt.newValue));
+            inputField.RegisterValueChangedCallback(evt => p.defaultValue.vector2Value = evt.newValue);
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -120; // Adjust as needed
         }
@@ -225,7 +218,7 @@ public class CustomPort : VisualElement
 
             inputField.value = (Vector3)p.defaultValue.ExtractValue(typeof(Vector3));
             fieldContainer.Add(new Label("(3)"));
-            inputField.RegisterValueChangedCallback(evt => n.UpdateDefault(f, evt.newValue));
+            inputField.RegisterValueChangedCallback(evt => p.defaultValue.vector3Value = evt.newValue);
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -160; // Adjust as needed
         }
@@ -235,7 +228,7 @@ public class CustomPort : VisualElement
 
             inputField.value = (Color)p.defaultValue.ExtractValue(typeof(Color));
             fieldContainer.Add(new Label("Color"));
-            inputField.RegisterValueChangedCallback(evt => n.UpdateDefault(f, evt.newValue));
+            inputField.RegisterValueChangedCallback(evt => p.defaultValue.colorValue = evt.newValue);
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -60; // Adjust as needed
         }
@@ -249,7 +242,7 @@ public class CustomPort : VisualElement
 
             inputField.value = (GameObject)p.defaultValue.ExtractValue(typeof(GameObject));
             fieldContainer.Add(new Label(""));
-            inputField.RegisterValueChangedCallback(evt => n.UpdateDefault(f, evt.newValue));
+            inputField.RegisterValueChangedCallback(evt=> p.defaultValue.gameObjectValue = evt.newValue as GameObject);
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -160; // Adjust as needed
         }
@@ -263,7 +256,7 @@ public class CustomPort : VisualElement
 
             inputField.value = (Transform)p.defaultValue.ExtractValue(typeof(Transform));
             fieldContainer.Add(new Label("Transform"));
-            inputField.RegisterValueChangedCallback(evt => n.UpdateDefault(f, evt.newValue));
+            inputField.RegisterValueChangedCallback(evt => p.defaultValue.transformValue = evt.newValue as Transform);
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -60; // Adjust as needed
         }
@@ -276,8 +269,5 @@ public class CustomPort : VisualElement
         return fieldContainer;
     }
 
-    public static CustomPort Create(Direction portDirection, Port.Capacity portCapacity, FieldInfo type, Node n)
-    {
-        return new CustomPort(portDirection, portCapacity, type, n);
-    }
+    
 }

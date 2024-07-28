@@ -10,25 +10,25 @@ public class PortAttribute : Attribute
 {
     public bool output;
     public bool readOnly;
-    public bool right;
+    public bool multi;
 
     public PortAttribute(bool output)
     {
         this.output = output;
         readOnly = false;
-        right = output;
+        multi = true;
     }
     public PortAttribute(bool output, bool read)
     {
         this.output = output;
         readOnly = read;
-        right = output;
+        multi = true;
     }
-    public PortAttribute(bool output, bool read, bool left)
+    public PortAttribute(bool output, bool read, bool multi)
     {
         this.output = output;
         readOnly = read;
-        right = left;
+        this.multi = multi;
     }
 }
 

@@ -14,19 +14,19 @@ public class FireNode: Node
    public override string Name => "Fire";
    protected override TreeStateData Evaluate(TreeStateData state)
    {
-      state = GetAllInputs(state);
-      if (!state.state.Virtual)
-      {
-         var b = Instantiate(bullet, position, Quaternion.LookRotation(direction), state.attached.transform);
-         output = new(b, position, direction);
-         
-         var next = GetConnection("output");
-         if (next.other)
-         {
-            next.other.Eval(state);
-         }
-      }
-      
+      // state = GetAllInputs(state);
+      // if (!state.state.Virtual)
+      // {
+      //    var b = Instantiate(bullet, position, Quaternion.LookRotation(direction), state.attached.transform);
+      //    output = new(b, position, direction);
+      //    
+      //    var next = GetConnection("output");
+      //    if (next.other)
+      //    {
+      //       next.other.Eval(state);
+      //    }
+      // }
+      //
       return state;
    }
 }

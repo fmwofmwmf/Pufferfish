@@ -12,30 +12,32 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     public abstract string Name { get; }
     [HideInInspector] public string guid;
     [HideInInspector] public Vector2 graphPos;
-
     
-    [FormerlySerializedAs("yap")] [Editable] [SerializeField] private List<string> fieldNames = new();
-    [FormerlySerializedAs("yep")] [Editable] [SerializeField] private List<ConnectedPort> fieldConnections = new();
-    private List<FieldInfo> fields;
-    private List<FieldInfo> inFields;
-    public Dictionary<string, object> outputs;
+    public List<CustomPort> inputPorts;
+    public List<CustomPort> outputPorts;
+    private Dictionary<string, FieldInfo> nodeFields;
     private int iterationId, activationId;
     
-    
-    [Serializable]
-    public class ConnectedPort
+    public void Start()
     {
-        public string field;
-        public bool read;
-        public Node other;
-        public DefaultValueHolder defaultValue;
+        foreach (var f in nodeFields.Values)
+        {
+            var o = f.GetCustomAttribute<PortAttribute>();
+            if (o.output)
+            {
+                outputPorts.Add(new CustomPort(this, true, o.multi, f));
+            }
+            else
+            {
+                inputPorts.Add(new CustomPort(this, false, o.multi, f));
+            }
+        }
     }
     
     public Node()
     {
-        fields = GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-            .Where(f => f.GetCustomAttribute<PortAttribute>() != null).ToList();
-        inFields = fields.Where(f => !f.GetCustomAttribute<PortAttribute>().output).ToList();
+        nodeFields = GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+            .Where(f => f.GetCustomAttribute<PortAttribute>() != null).ToDictionary( f=> f.Name, f => f);
     }
 
     public TreeStateData Eval(TreeStateData state)
@@ -46,138 +48,93 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
             iterationId = state.iterationId;
             return Evaluate(state);
         }
-        
 
         return state;
     }
     protected abstract TreeStateData Evaluate(TreeStateData state);
 
-    public ConnectedPort GetConnection(string fieldName)
-    {
-        var a = fieldNames.FindIndex(s => s == fieldName);
-        if (a != -1)
-        {
-            return fieldConnections[a];
-        }
-        return null;
-    }
-    
-    public List<FieldInfo> GetAllFields()
-    {
-        return fields;
-    }
-    
-    public void Print()
-    {
-        Debug.Log(fieldConnections);
-    }
     public virtual void Reset() {}
 
     protected TreeStateData GetAllInputs(TreeStateData state)
     {
-        var s = new HashSet<ConnectedPort>();
-        inFields.ForEach(f=>
-        {
-            s.Add(GetConnection(f.Name));
-        });
-        var outState = state.Clone();
-        foreach (var port in s)
-        {
-            try
-            {
-                if (port.other != null && !port.read)
-                {
-                    var a = port.other.Eval(state);
-                    outState = outState.Merge(a);
+        // var s = new HashSet<ConnectedPort>();
+        // inFields.ForEach(f=>
+        // {
+        //     s.Add(GetConnection(f.Name));
+        // });
+        // var outState = state.Clone();
+        // foreach (var port in s)
+        // {
+        //     try
+        //     {
+        //         if (port.other != null && !port.read)
+        //         {
+        //             var a = port.other.Eval(state);
+        //             outState = outState.Merge(a);
+        //
+        //             if (a.state.Error) Debug.Log($"oops Upstream: {port}");
+        //         }
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Debug.Log(e);
+        //         outState = outState.Error();
+        //         return outState;
+        //     }
+        // }
+        //
+        // foreach (var f in inFields)
+        // {
+        //     if (f != null) GetInput(f.Name);
+        // }
 
-                    if (a.state.Error) Debug.Log($"oops Upstream: {port}");
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e);
-                outState = outState.Error();
-                return outState;
-            }
-        }
-        
-        foreach (var f in inFields)
-        {
-            if (f != null) GetInput(f.Name);
-        }
-
-        return outState;
+        return new();
     }
 
     public void DetachAll()
     {
-        foreach (var f in GetAllFields())
-        {
-            var o = GetConnection(f.Name);
-            if (o.other)
-            {
-                o.other.Disconnect(o.field);
-            }
-            Disconnect(f.Name);
-        }
+        inputPorts.ForEach(p => p.DisconnectAll());
+        outputPorts.ForEach(p => p.DisconnectAll());
     }
-
+    
+    public CustomPort FindInputPort(string field)
+    {
+        return inputPorts.Find(p => p.fieldName == field);
+    }
+    
+    public CustomPort FindOutputPort(string field)
+    {
+        return outputPorts.Find(p => p.fieldName == field);
+    }
+    
     protected void GetInput(string field)
     {
-        var a = fieldNames.FindIndex(s => s == field);
-        
-        if (fieldConnections[a].field != "" && fieldConnections[a].other)
-        {
-            var other = fieldConnections[a].other;
-            var f = GetAllFields().Find(s => s.Name == field);
-            var otherField = other.GetAllFields().Find(s => s.Name == fieldConnections[a].field);
-            f.SetValue(this, otherField.GetValue(other));
-        }
-        else
-        {
-            var f = GetAllFields().Find(s => s.Name == field);
-            var v = fieldConnections[a].defaultValue.ExtractValue(f.FieldType);
-            f.SetValue(this, v);
-        }
-    }
-    
-    public void Connect(FieldInfo field, FieldInfo otherField, Node other)
-    {
-        var a = fieldNames.FindIndex(s => s == field.Name);
-        fieldConnections[a].field = otherField.Name;
-        fieldConnections[a].other = other;
-        fieldConnections[a].read = otherField.GetCustomAttribute<PortAttribute>().readOnly;
-    }
-    
-    public void Disconnect(string field)
-    {
-        var a = fieldNames.FindIndex(s => s == field);
-        fieldConnections[a].other = null;
-        fieldConnections[a].field = "";
+        // var a = fieldNames.FindIndex(s => s == field);
+        //
+        // if (fieldConnections[a].field != "" && fieldConnections[a].other)
+        // {
+        //     var other = fieldConnections[a].other;
+        //     var f = GetAllFields().Find(s => s.Name == field);
+        //     var otherField = other.GetAllFields().Find(s => s.Name == fieldConnections[a].field);
+        //     f.SetValue(this, otherField.GetValue(other));
+        // }
+        // else
+        // {
+        //     var f = GetAllFields().Find(s => s.Name == field);
+        //     var v = fieldConnections[a].defaultValue.ExtractValue(f.FieldType);
+        //     f.SetValue(this, v);
+        // }
     }
 
     public void OnBeforeSerialize()
     {
         
     }
-
-    public void Start()
-    {
-        foreach (var f in fields)
-        {
-            var a = fieldNames.FindIndex(s => s == f.Name);
-            if (a == -1)
-            {
-                fieldNames.Add(f.Name);
-                fieldConnections.Add(new(){other=null, field = ""});
-            }
-        }
-    }
-
+    
     public void UpdateDefault(FieldInfo field, object value)
     {
-        var a = fieldNames.FindIndex(s => s == field.Name);
-        fieldConnections[a].defaultValue.SetValue(field, value);
+        var a = inputPorts.Find(p => p.fieldName == field.Name);
+        a.defaultValue.SetValue(field, value);
     }
     
     
