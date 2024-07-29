@@ -113,7 +113,8 @@ public class BulletGraphView : GraphView
             VisualPort p1 = edge.input.parent as VisualPort;
             VisualPort p2 = edge.output.parent as VisualPort;
             
-            p2.Collapse();
+            Debug.Log(p2);
+            p1.Collapse();
             currentGraph.Connect(n1.Node, n2.Node, p1.Field, p2.Field);
          });
       }

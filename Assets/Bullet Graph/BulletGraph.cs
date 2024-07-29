@@ -22,11 +22,9 @@ public class BulletGraph : ScriptableObject
         for (int i = edges.Count - 1; i >= 0; i--)
         {
             var edge = edges[i];
-            if (edge.remove)
-            {
-                del.Add(edge);
-                continue;
-            }
+
+            del.Add(edge);
+
             CustomPort inPort = edge.InputPort;
             CustomPort outPort = edge.OutputPort;
 

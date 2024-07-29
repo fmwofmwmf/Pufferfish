@@ -12,11 +12,11 @@ using UnityEngine.Serialization;
 public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
 {
     public abstract string Name { get; }
-    [Editable] public string guid;
+    public string guid;
     [HideInInspector] public Vector2 graphPos;
     
-    [Editable] public List<CustomPort> inputPorts = new();
-    [Editable] public List<CustomPort> outputPorts = new();
+    public List<CustomPort> inputPorts = new();
+    public List<CustomPort> outputPorts = new();
     private Dictionary<string, FieldInfo> nodeFields;
     private int iterationId, activationId;
     private Action transferDelegate;
@@ -80,13 +80,20 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
             {
                 var get = p.Edges[0];
                 if (!get.OutputPort.readOnly) next.Add(get.outputNode);
-                var sourceParameter = Expression.Constant(get.inputNode, get.inputNode.GetType());
-                var targetParameter = Expression.Constant(get.outputNode, get.outputNode.GetType());
+                var sourceParameter = Expression.Constant(get.outputNode, get.outputNode.GetType());
+                var targetParameter = Expression.Constant(get.inputNode, get.inputNode.GetType());
                 
-                var sourceField = Expression.Field(sourceParameter, get.InputPort.AttachedField);
-                var targetField = Expression.Field(targetParameter, get.OutputPort.AttachedField);
+                var sourceField = Expression.Field(sourceParameter, get.OutputPort.AttachedField);
+                var targetField = Expression.Field(targetParameter, get.InputPort.AttachedField);
                 var assignExpression = Expression.Assign(targetField, sourceField);
                 expressions.Add(assignExpression);
+                
+                // expressions.Add(() =>
+                // {
+                //     object v = get.OutputPort.AttachedField.GetValue(get.outputNode);
+                //     Debug.Log($"setting the {get.InputPort.AttachedField} to {v}");
+                //     get.InputPort.AttachedField.SetValue(get.inputNode, v);
+                // });
             }
         }
 
