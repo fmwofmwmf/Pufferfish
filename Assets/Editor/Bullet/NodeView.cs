@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
@@ -49,7 +50,8 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
         foreach (var port in Node.outputPorts)
         {
             var p = VisualPort.Create(Direction.Output, port.multi? Port.Capacity.Multi : Port.Capacity.Single, port, Node);
-            p.port.portName = TypeName(port.displayName, port.FieldType);
+            Debug.Log(port.readOnly);
+            p.port.portName = TypeName(port.displayName, port.FieldType) + (port.readOnly? " [R]" : "");
             Ports[port.fieldName] = p;
             outputContainer.Add(p);
         }
@@ -91,13 +93,26 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
             case { } t when t == typeof(Vector3):
                 n = "3";
                 break;
+            case { } t when t == typeof(PortLogic):
+                    n = "Logic";
+                break;
             default:
                 n = f.Name;
                 break;
         }
         
-        TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
-        return $"{textInfo.ToTitleCase(fieldName)}({n})";
+        return $"{SplitCamelCase(fieldName)} ({n})";
+    }
+    
+    private static string SplitCamelCase(string input)
+    {
+        // Use regex to find positions where a lowercase letter is followed by an uppercase letter
+        var result = Regex.Replace(input, "([a-z])([A-Z])", "$1 $2");
+
+        // Ensure the first letter is capitalized and handle camelCase correctly
+        result = Regex.Replace(result, "(^| )([a-z])", match => match.Groups[1].Value + char.ToUpper(match.Groups[2].Value[0]));
+
+        return result;
     }
 
     public override void SetPosition(Rect newPos)

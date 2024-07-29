@@ -7,8 +7,8 @@ using UnityEngine;
 [Node("Timing")]
 public class RepeatNode: Node
 { 
-   [PortDecorator(CustomPort.Style.square)] [Port(false)] public float linkIn;
-   [PortDecorator(CustomPort.Style.square)] [Port(true)] public float linkOut;
+   [PortDecorator(CustomPort.Style.square)] [Port(false)] public PortLogic LogicIn;
+   [PortDecorator(CustomPort.Style.square)] [Port(true)] public PortLogic LogicOut;
    [Port(false)] public float max, min, increment;
    [Port(true)] public float f;
    [Port(true, true)] public float readF;

@@ -27,6 +27,7 @@ public class CustomPort
         AttachedField = info;
         FieldType = info.FieldType;
         readOnly = info.GetCustomAttribute<PortAttribute>().readOnly;
+        Debug.Log(readOnly);
         Edges = new List<CustomEdge>();
     }
 

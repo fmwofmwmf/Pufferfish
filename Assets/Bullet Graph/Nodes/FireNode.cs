@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class FireNode: Node
 {
+   [PortDecorator(CustomPort.Style.square)] [Port(false)] public PortLogic LogicIn;
    [PortDecorator(CustomPort.Style.square)] [Port(true, true)] public Bullet output;
    [Port(false)] public GameObject bullet;
    [Port(false)] public Vector3 position;
@@ -27,7 +28,7 @@ public class FireNode: Node
          // }
       }
       
-      return state.Reset();
+      return state;
    }
 }
 

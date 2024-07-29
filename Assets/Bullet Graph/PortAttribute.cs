@@ -57,3 +57,6 @@ public class NodeAttribute : Attribute
         this.path = path;
     }
 }
+
+// Dummy class for logic ports
+public class PortLogic {}

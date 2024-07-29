@@ -46,7 +46,8 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
         return new CustomPort
         {
             Edges = new List<CustomEdge>(), multi = multi, fieldName = f.Name,
-            FieldType = f.FieldType, displayName = n, input = input, shape = s
+            FieldType = f.FieldType, displayName = n, input = input, shape = s,
+            readOnly = f.GetCustomAttribute<PortAttribute>().readOnly
         };
     }
 
