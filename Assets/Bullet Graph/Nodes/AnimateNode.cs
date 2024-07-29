@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -40,7 +41,7 @@ public class AnimateNode: Node
          {
             c = true;
             
-            if (state.test) TestAnimate();
+            if (state.test) _ = TestAnimate();
             else state.attached.GetComponent<MonoBehaviour>().StartCoroutine(Animate());
          }
          
@@ -107,48 +108,45 @@ public class AnimateNode: Node
    
    async Awaitable TestAnimate()
    {
-      // float t = 0;
-      // float globalT = 0;
-      // List<Anim> remove = new();
-      //
-      // while (globalT < maxAnimationLength && animators.Count > 0)
-      // {
-      //    t += 1/60f; //Time.dt
-      //    globalT += 1/60f;
-      //
-      //    while (t > 1f / 60)
-      //    {
-      //       t -= 1f / 60;
-      //       foreach (var a in animators)
-      //       {
-      //          if (!a.b.main)
-      //          {
-      //             remove.Add(a);
-      //             continue;
-      //          }
-      //          var next = GetConnection("output");
-      //          if (next.other)
-      //          {
-      //             pos = a.b.startPos;
-      //             dir = a.b.startDir;
-      //             index = a.id;
-      //             time = a.s.iterationId/60f;
-      //             output = a.b;
-      //          
-      //             next.other.Eval(a.s);
-      //             a.s.iterationId++;
-      //          }
-      //       }
-      //
-      //       foreach (var r in remove)
-      //       {
-      //          animators.Remove(r);
-      //       }
-      //       remove.Clear();
-      //    }
-      //    await Task.Delay(16);
-      // }
-      //
-      // Debug.Log($"finished animation");
+      float t = 0;
+      float globalT = 0;
+      List<Anim> remove = new();
+      
+      while (globalT < maxAnimationLength && animators.Count > 0)
+      {
+         t += 1/60f; //Time.dt
+         globalT += 1/60f;
+      
+         while (t > 1f / 60)
+         {
+            t -= 1f / 60;
+            foreach (var a in animators)
+            {
+               if (!a.b.main)
+               {
+                  remove.Add(a);
+                  continue;
+               }
+               pos = a.b.startPos;
+               dir = a.b.startDir;
+               index = a.id;
+               time = a.s.iterationId/60f;
+               output = a.b;
+               
+               var next = FindOutputPort("output").Edges;
+               if (next.Any()) a.s.iterationId++;
+               next.ForEach(e => e.inputNode.Eval(a.s));
+            }
+      
+            foreach (var r in remove)
+            {
+               animators.Remove(r);
+            }
+            remove.Clear();
+         }
+         await Task.Delay(16);
+      }
+      
+      Debug.Log($"finished animation");
    }
 }

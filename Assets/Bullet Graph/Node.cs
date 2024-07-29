@@ -20,7 +20,7 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     private Dictionary<string, FieldInfo> nodeFields;
     private int iterationId, activationId;
     private Action transferDelegate;
-    private SortedSet<Node> next;
+    private List<Node> next;
     public virtual void ClearState()
     {
          
@@ -74,33 +74,69 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     {
         next = new();
         var expressions = new List<Expression>();
-
+        
+        MethodInfo tryTypeConvertMethod = typeof(Node).GetMethod(nameof(TryTypeConvert), BindingFlags.Static | BindingFlags.Public);
+        
         foreach (var p in inputPorts)
         {
             if (p.Edges.Any())
             {
                 var get = p.Edges[0];
-                if (!get.OutputPort.readOnly) next.Add(get.outputNode);
+                if (!get.OutputPort.readOnly && !next.Contains(get.outputNode)) next.Add(get.outputNode);
                 var sourceParameter = Expression.Constant(get.outputNode, get.outputNode.GetType());
                 var targetParameter = Expression.Constant(get.inputNode, get.inputNode.GetType());
                 
                 var sourceField = Expression.Field(sourceParameter, get.OutputPort.AttachedField);
                 var targetField = Expression.Field(targetParameter, get.InputPort.AttachedField);
-                var assignExpression = Expression.Assign(targetField, sourceField);
-                expressions.Add(assignExpression);
                 
-                // expressions.Add(() =>
-                // {
-                //     object v = get.OutputPort.AttachedField.GetValue(get.outputNode);
-                //     Debug.Log($"setting the {get.InputPort.AttachedField} to {v}");
-                //     get.InputPort.AttachedField.SetValue(get.inputNode, v);
-                // });
+                var tryTypeConvertCall = Expression.Call(
+                    tryTypeConvertMethod,
+                    Expression.Convert(sourceField, typeof(object)),
+                    Expression.Constant(targetField.Type)
+                );
+
+                // Convert the result back to the target field type
+                var convertedValue = Expression.Convert(tryTypeConvertCall, targetField.Type);
+
+                var assignExpression = Expression.Assign(targetField, convertedValue);
+                
+                expressions.Add(assignExpression);
             }
         }
 
         var body = Expression.Block(expressions);
         var lambda = Expression.Lambda<Action>(body);
         return lambda.Compile();
+    }
+    
+    public static object TryTypeConvert(object input, Type targetType)
+    {
+        if (input == null) return null;
+        var t1 = input.GetType();
+        Debug.Log($"{t1} {targetType}");
+        if (t1 == targetType) return input;
+        
+        switch (t1)
+        {
+            case not null when t1 == typeof(float) && targetType == typeof(Vector2):
+                return new Vector2((float)input, (float)input);
+            
+            case not null when t1 == typeof(float) && targetType == typeof(Vector3):
+                return new Vector3((float)input, (float)input, (float)input);
+            
+            case not null when t1 == typeof(Vector2) && targetType == typeof(float):
+                return ((Vector2)input).x;
+            
+            case not null when t1 == typeof(Vector2) && targetType == typeof(Vector3):
+                return (Vector3)(Vector2)input;
+
+            case not null when t1 == typeof(Vector3) && targetType == typeof(float):
+                return ((Vector3)input).x;
+            
+            case not null when t1 == typeof(Vector3) && targetType == typeof(Vector2):
+                return (Vector2)(Vector3)input;
+        }
+        return input;
     }
 
     public void CalculateTransfer()
@@ -188,25 +224,6 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
         if (p.AttachedField == null) p.Reset(nodeFields[field]);
         return p;
     }
-    
-    protected void GetInput(string field)
-    {
-        // var a = fieldNames.FindIndex(s => s == field);
-        //
-        // if (fieldConnections[a].field != "" && fieldConnections[a].other)
-        // {
-        //     var other = fieldConnections[a].other;
-        //     var f = GetAllFields().Find(s => s.Name == field);
-        //     var otherField = other.GetAllFields().Find(s => s.Name == fieldConnections[a].field);
-        //     f.SetValue(this, otherField.GetValue(other));
-        // }
-        // else
-        // {
-        //     var f = GetAllFields().Find(s => s.Name == field);
-        //     var v = fieldConnections[a].defaultValue.ExtractValue(f.FieldType);
-        //     f.SetValue(this, v);
-        // }
-    }
 
     public void OnBeforeSerialize()
     {
@@ -238,7 +255,7 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
             if (nodeFields.TryGetValue(p.fieldName, out FieldInfo f)) p.Reset(f);
             else {ok = false;}
         });
-        Debug.Log(ok);
+        
         if (ok || inputPorts.Count + outputPorts.Count != nodeFields.Count) Reset();
     }
     
@@ -327,128 +344,5 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
             e = false;
         }
     }
-
-    
 }
 
-[Serializable]
-public struct DefaultValueHolder
-{
-    // Fields for all Unity serializable types
-    public int intValue;
-    public float floatValue;
-    public string stringValue;
-    public bool boolValue;
-    public Vector2 vector2Value;
-    public Vector3 vector3Value;
-    public Color colorValue;
-    public GameObject gameObjectValue;
-    public Transform transformValue;
-
-    // Add other types as needed...
-
-    // The type field to keep track of the stored type
-    public string type;
-
-    // Method to set value based on FieldInfo and object
-    public DefaultValueHolder SetValue(FieldInfo field, object value)
-    {
-        Type fieldType = field.FieldType;
-
-        if (fieldType == typeof(int))
-        {
-            intValue = (int)value;
-            type = "int";
-        }
-        else if (fieldType == typeof(float))
-        {
-            floatValue = (float)value;
-            type = "float";
-        }
-        else if (fieldType == typeof(string))
-        {
-            stringValue = (string)value;
-            type = "string";
-        }
-        else if (fieldType == typeof(bool))
-        {
-            boolValue = (bool)value;
-            type = "bool";
-        }
-        else if (fieldType == typeof(Vector2))
-        {
-            vector2Value = (Vector2)value;
-            type = "Vector2";
-        }
-        else if (fieldType == typeof(Vector3))
-        {
-            vector3Value = (Vector3)value;
-            type = "Vector3";
-        }
-        else if (fieldType == typeof(Color))
-        {
-            colorValue = (Color)value;
-            type = "Color";
-        }
-        else if (fieldType == typeof(GameObject))
-        {
-            gameObjectValue = (GameObject)value;
-            type = "GameObject";
-        }
-        else if (fieldType == typeof(Transform))
-        {
-            transformValue = (Transform)value;
-            type = "Transform";
-        }
-        else
-        {
-            throw new ArgumentException($"Unsupported type: {fieldType}");
-        }
-
-        return this;
-    }
-    
-    public object ExtractValue(Type fieldType)
-    {
-        if (fieldType == typeof(int))
-        {
-            return intValue;
-        }
-        else if (fieldType == typeof(float))
-        {
-            return floatValue;
-        }
-        else if (fieldType == typeof(string))
-        {
-            return stringValue;
-        }
-        else if (fieldType == typeof(bool))
-        {
-            return boolValue;
-        }
-        else if (fieldType == typeof(Vector2))
-        {
-            return vector2Value;
-        }
-        else if (fieldType == typeof(Vector3))
-        {
-            return vector3Value;
-        }
-        else if (fieldType == typeof(Color))
-        {
-            return colorValue;
-        }
-        else if (fieldType == typeof(GameObject))
-        {
-            return gameObjectValue;
-        }
-        else if (fieldType == typeof(Transform))
-        {
-            return transformValue;
-        }
-        else
-        {
-            throw new ArgumentException($"Unsupported type: {fieldType}");
-        }
-    }
-}

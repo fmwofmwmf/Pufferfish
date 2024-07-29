@@ -38,6 +38,7 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
         foreach (var port in Node.inputPorts)
         {
             var p = VisualPort.Create(Direction.Input, port.multi? Port.Capacity.Multi : Port.Capacity.Single, port, Node);
+            
             if (port.Edges.Any()) p.Collapse();
             p.port.portName = TypeName(port.displayName, port.FieldType);
             Ports[port.fieldName] = p;
@@ -50,7 +51,7 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
         foreach (var port in Node.outputPorts)
         {
             var p = VisualPort.Create(Direction.Output, port.multi? Port.Capacity.Multi : Port.Capacity.Single, port, Node);
-            Debug.Log(port.readOnly);
+            
             p.port.portName = TypeName(port.displayName, port.FieldType) + (port.readOnly? " [R]" : "");
             Ports[port.fieldName] = p;
             outputContainer.Add(p);
@@ -78,7 +79,7 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node
         string n;
         switch (f)
         {
-            case { } t when t == typeof(string):
+            case not null when f == typeof(string):
                 n = "str";
                 break;
             case { } t when t == typeof(int):

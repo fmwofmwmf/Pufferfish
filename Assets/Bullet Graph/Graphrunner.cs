@@ -15,12 +15,12 @@ public class Graphrunner : StateMachineBehaviour
         var node = g.nodes.Find(
             n => n is FireNode f && f.id == id
         );
-        RunNode(node, animator.gameObject);
+        animator.GetComponent<MonoBehaviour>().StartCoroutine(RunNode(node, animator.gameObject));
     }
     
-    private async Awaitable RunNode(Node n, GameObject g)
+    private IEnumerator RunNode(Node n, GameObject go)
     {
-        Node.TreeStateData state = new() { originator = n, attached = g, activationId = Random.Range(0, 57890190), test = false };
+        Node.TreeStateData state = new() { originator = n, attached = go, activationId = Random.Range(0, 57890190), test = false };
         state = state.Repeat();
         var i = 0;
         while (state.state.Repeat && i<300)
@@ -28,7 +28,7 @@ public class Graphrunner : StateMachineBehaviour
             state = n.Eval(state.Reset());
             state.iterationId++;
             i++;
-            await Task.Delay(1000/60);
+            yield return new WaitForSeconds(1f / 60);
         }
         Debug.Log($"finished testing {n}");
     }

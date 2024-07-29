@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -31,6 +30,12 @@ public class RepeatNode: Node
          if (state.state.Error) return state;
       }
 
+      if (increment == 0 || (max - min) / increment < 0)
+      {
+         Debug.Log($"Invalid loop conditions: {max}, {min}, {increment}");
+         return state.Error();
+      }
+      
       if (c < max-increment)
       {
          f = c;

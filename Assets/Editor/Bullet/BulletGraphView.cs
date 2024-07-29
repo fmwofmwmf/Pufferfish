@@ -70,9 +70,23 @@ public class BulletGraphView : GraphView
          VisualPort e = end.parent as VisualPort;
          VisualPort s = startPort.parent as VisualPort;
          
-         return e != null && s != null && end.node != startPort.node && end.portType == startPort.portType &&
+         return e != null && s != null && end.node != startPort.node && CompatibleTypes(end.portType, startPort.portType) &&
                 end.direction != startPort.direction && e.Shape == s.Shape;
       }).ToList();
+   }
+   private static readonly HashSet<(Type, Type)> ValidTypes = new HashSet<(Type, Type)>
+   {
+      (typeof(float), typeof(Vector2)),
+      (typeof(float), typeof(Vector3)),
+      (typeof(Vector2), typeof(float)),
+      (typeof(Vector2), typeof(Vector3)),
+      (typeof(Vector3), typeof(float)),
+      (typeof(Vector3), typeof(Vector2)),
+   };
+   
+   private bool CompatibleTypes(Type t1, Type t2)
+   {
+      return t1 == t2 || ValidTypes.Contains((t1, t2)) || ValidTypes.Contains((t2, t1));
    }
 
    private GraphViewChange OnGraphViewChanged(GraphViewChange graphviewchange)

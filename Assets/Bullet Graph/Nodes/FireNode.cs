@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -18,14 +19,14 @@ public class FireNode: Node
       state = GetAllInputs(state);
       if (!state.state.Virtual)
       {
-         var b = Instantiate(bullet, position, Quaternion.LookRotation(direction), state.attached.transform);
+         var b = Instantiate(bullet, position, Mathfm.RightQ(direction), state.attached.transform);
          output = new(b, position, direction);
          
-         // var next = GetConnection("output");
-         // if (next.other)
-         // {
-         //    next.other.Eval(state);
-         // }
+         var next = FindOutputPort("output");
+         if (next.Edges.Any())
+         {
+            next.Edges[0].inputNode.Eval(state);
+         }
       }
       
       return state;
