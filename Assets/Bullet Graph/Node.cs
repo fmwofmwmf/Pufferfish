@@ -19,7 +19,8 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     [Editable] public List<CustomPort> outputPorts = new();
     private Dictionary<string, FieldInfo> nodeFields;
     private int iterationId, activationId;
-    
+    private Action transferDelegate;
+    private SortedSet<Node> next;
     public virtual void ClearState()
     {
          
@@ -44,7 +45,7 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     {
         return new CustomPort
         {
-            Edges = new List<CustomEdge>(), multi = multi, defaultValue = new DefaultValueHolder(), fieldName = f.Name,
+            Edges = new List<CustomEdge>(), multi = multi, fieldName = f.Name,
             FieldType = f.FieldType, displayName = n, input = input, shape = s
         };
     }
@@ -68,10 +69,9 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     }
     protected abstract TreeStateData Evaluate(TreeStateData state);
     
-    public Action<Node> CreateTransferDelegate()
+    private Action CreateTransferDelegate()
     {
-        var sourceParameter = Expression.Parameter(typeof(Node), "source");
-        var targetParameter = Expression.Parameter(typeof(Node), "target");
+        next = new();
         var expressions = new List<Expression>();
 
         foreach (var p in inputPorts)
@@ -79,6 +79,9 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
             if (p.Edges.Any())
             {
                 var get = p.Edges[0];
+                if (!get.OutputPort.readOnly) next.Add(get.outputNode);
+                var sourceParameter = Expression.Constant(get.inputNode, get.inputNode.GetType());
+                var targetParameter = Expression.Constant(get.outputNode, get.outputNode.GetType());
                 
                 var sourceField = Expression.Field(sourceParameter, get.InputPort.AttachedField);
                 var targetField = Expression.Field(targetParameter, get.OutputPort.AttachedField);
@@ -88,12 +91,42 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
         }
 
         var body = Expression.Block(expressions);
-        var lambda = Expression.Lambda<Action<Node>>(body, sourceParameter, targetParameter);
+        var lambda = Expression.Lambda<Action>(body);
         return lambda.Compile();
+    }
+
+    public void CalculateTransfer()
+    {
+        transferDelegate = CreateTransferDelegate();
     }
     
     protected TreeStateData GetAllInputs(TreeStateData state)
     {
+        var outState = state.Clone();
+        try
+        {
+            foreach (var node in next)
+            {
+                Debug.Log(node);
+                
+                if (node)
+                {
+                    outState = outState.Merge(node.Eval(state));
+            
+                    if (outState.state.Error) Debug.Log($"oops Upstream: {node}");
+                }
+            }
+
+            transferDelegate.Invoke();
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+            outState = outState.Error();
+            return outState;
+        }
+        
+        
         // var s = new HashSet<ConnectedPort>();
         // inFields.ForEach(f=>
         // {
@@ -125,7 +158,7 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
         //     if (f != null) GetInput(f.Name);
         // }
 
-        return new();
+        return outState;
     }
 
     public void DisconnectAll()
@@ -136,12 +169,16 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     
     public CustomPort FindInputPort(string field)
     {
-        return inputPorts.Find(p => p.fieldName == field);
+        var p = inputPorts.Find(p => p.fieldName == field);
+        if (p.AttachedField == null) p.Reset(nodeFields[field]);
+        return p;
     }
     
     public CustomPort FindOutputPort(string field)
     {
-        return outputPorts.Find(p => p.fieldName == field);
+        var p = outputPorts.Find(p => p.fieldName == field);
+        if (p.AttachedField == null) p.Reset(nodeFields[field]);
+        return p;
     }
     
     protected void GetInput(string field)
@@ -170,8 +207,7 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     
     public void UpdateDefault(FieldInfo field, object value)
     {
-        var a = inputPorts.Find(p => p.fieldName == field.Name);
-        a.defaultValue.SetValue(field, value);
+        field.SetValue(value, this);
     }
     
     

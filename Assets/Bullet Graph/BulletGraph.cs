@@ -12,7 +12,29 @@ public class BulletGraph : ScriptableObject
 {
     [SerializeReference] public List<Node> nodes = new();
     public List<CustomEdge> edges = new();
+    [NonSerialized] public bool started;
 
+    public void InitializeEdges()
+    {
+        if (started) return;
+        started = true;
+        List<CustomEdge> del = new List<CustomEdge>();
+        for (int i = edges.Count - 1; i >= 0; i--)
+        {
+            var edge = edges[i];
+            if (edge.remove)
+            {
+                del.Add(edge);
+                continue;
+            }
+            CustomPort inPort = edge.InputPort;
+            CustomPort outPort = edge.OutputPort;
+
+            Connect(edge.inputNode, edge.outputNode, edge.inName, edge.outName);
+        }
+        del.ForEach(e => edges.Remove(e));
+    }
+    
     public Node CreateNode(Type type, Vector2 position)
     {
         Node node = CreateInstance(type) as Node;
@@ -54,18 +76,20 @@ public class BulletGraph : ScriptableObject
         CustomPort p1 = inNode.FindInputPort(inPort);
         CustomPort p2 = outNode.FindOutputPort(outPort);
         CustomEdge e = new CustomEdge(this, p1, p2, inNode, outNode);
+        e.guid = GUID.Generate().ToString();
         edges.Add(e);
-        
         p1.Connect(e);
         p2.Connect(e);
+        inNode.CalculateTransfer();
+        outNode.CalculateTransfer();
     }
     public void Disconnect(Node inNode, Node outNode, string inPort, string outPort)
     {
         CustomPort p1 = inNode.FindInputPort(inPort);
         CustomPort p2 = outNode.FindOutputPort(outPort);
+        
         CustomEdge e = p1.FindConnectedEdge(p2);
-        edges.Remove(e);
-        p1.RemoveEdge(e);
-        p2.RemoveEdge(e);
+
+        e.DeleteEdge();
     }
 }

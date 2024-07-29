@@ -8,16 +8,16 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Serialization;
 [Serializable]
-public struct CustomPort
+public class CustomPort
 {
     [NonSerialized] public List<CustomEdge> Edges;
     public Type FieldType;
-    public DefaultValueHolder defaultValue;
     public FieldInfo AttachedField;
     public string fieldName;
     public string displayName;
     public bool input;
     public bool multi;
+    public bool readOnly;
     public Style shape;
 
     public void Reset(FieldInfo info)
@@ -26,6 +26,7 @@ public struct CustomPort
         displayName = info.Name;
         AttachedField = info;
         FieldType = info.FieldType;
+        readOnly = info.GetCustomAttribute<PortAttribute>().readOnly;
         Edges = new List<CustomEdge>();
     }
 
@@ -47,7 +48,10 @@ public struct CustomPort
     public void DisconnectAll()
     {
         EdgeCheck();
-        Edges.ForEach(e => e.DeleteEdge());
+        for (int i = Edges.Count - 1; i >= 0; i--)
+        {
+            Edges[i].DeleteEdge();
+        }
     }
     
     public void RemoveEdge(CustomEdge edge)

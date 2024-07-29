@@ -8,17 +8,18 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Serialization;
 [Serializable]
-public struct CustomEdge
+public class CustomEdge
 {
     public string guid;
+    public BulletGraph g;
     public CustomPort InputPort {get
     {
-        if (ip.fieldName == "") ReInit();
+        ReInit();
         return ip;
     }}
     public CustomPort OutputPort {get
     {
-        if (op.fieldName == "") ReInit();
+        ReInit();
         return op;
     }}
     private CustomPort ip, op;
@@ -29,6 +30,7 @@ public struct CustomEdge
 
     public CustomEdge(BulletGraph g, CustomPort inputPort, CustomPort outputPort, Node inNode, Node outNode)
     {
+        this.g = g;
         guid = "";
         ip = inputPort;
         op = outputPort;
@@ -52,5 +54,9 @@ public struct CustomEdge
         remove = true;
         InputPort.RemoveEdge(this);
         OutputPort.RemoveEdge(this);
+
+        inputNode.CalculateTransfer();
+        outputNode.CalculateTransfer();
+        g.edges.Remove(this);
     }
 }

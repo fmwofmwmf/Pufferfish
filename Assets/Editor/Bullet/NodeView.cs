@@ -206,10 +206,9 @@ public class VisualPort : VisualElement
         {
             IntegerField inputField = new IntegerField();
             
-            
-            inputField.value = (int)p.defaultValue.ExtractValue(typeof(int));
+            inputField.value = (int)p.AttachedField.GetValue(n);
             fieldContainer.Add(new Label("Int"));
-            inputField.RegisterValueChangedCallback(evt => p.defaultValue.intValue = evt.newValue);
+            inputField.RegisterValueChangedCallback(evt => p.AttachedField.SetValue(n, evt.newValue));
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -60; // Adjust as needed
         }
@@ -217,9 +216,9 @@ public class VisualPort : VisualElement
         {
             FloatField inputField = new FloatField();
 
-            inputField.value = (float)p.defaultValue.ExtractValue(typeof(float));
+            inputField.value = (float)p.AttachedField.GetValue(n);
             fieldContainer.Add(new Label("Float"));
-            inputField.RegisterValueChangedCallback(evt=> p.defaultValue.floatValue = evt.newValue);
+            inputField.RegisterValueChangedCallback(evt => p.AttachedField.SetValue(n, evt.newValue));
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -60; // Adjust as needed
         }
@@ -227,27 +226,27 @@ public class VisualPort : VisualElement
         {
             TextField inputField = new TextField();
             
-            inputField.value = (string)p.defaultValue.ExtractValue(typeof(string));
+            inputField.value = (string)p.AttachedField.GetValue(n);
             fieldContainer.Add(new Label("String"));
-            inputField.RegisterValueChangedCallback(evt => p.defaultValue.stringValue = evt.newValue);
+            inputField.RegisterValueChangedCallback(evt => p.AttachedField.SetValue(n, evt.newValue));
             fieldContainer.Add(inputField);
         }
         else if (fieldType == typeof(bool))
         {
             Toggle inputField = new Toggle();
             
-            inputField.value = (bool)p.defaultValue.ExtractValue(typeof(bool));
+            inputField.value = (bool)p.AttachedField.GetValue(n);
             fieldContainer.Add(new Label("Boolean"));
-            inputField.RegisterValueChangedCallback(evt => p.defaultValue.boolValue = evt.newValue);
+            inputField.RegisterValueChangedCallback(evt => p.AttachedField.SetValue(n, evt.newValue));
             fieldContainer.Add(inputField);
         }
         else if (fieldType == typeof(Vector2))
         {
             Vector2Field inputField = new Vector2Field();
             
-            inputField.value = (Vector2)p.defaultValue.ExtractValue(typeof(Vector2));
+            inputField.value = (Vector2)p.AttachedField.GetValue(n);
             fieldContainer.Add(new Label("(2)"));
-            inputField.RegisterValueChangedCallback(evt => p.defaultValue.vector2Value = evt.newValue);
+            inputField.RegisterValueChangedCallback(evt => p.AttachedField.SetValue(n, evt.newValue));
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -120; // Adjust as needed
         }
@@ -255,9 +254,9 @@ public class VisualPort : VisualElement
         {
             Vector3Field inputField = new Vector3Field();
 
-            inputField.value = (Vector3)p.defaultValue.ExtractValue(typeof(Vector3));
+            inputField.value = (Vector3)p.AttachedField.GetValue(n);
             fieldContainer.Add(new Label("(3)"));
-            inputField.RegisterValueChangedCallback(evt => p.defaultValue.vector3Value = evt.newValue);
+            inputField.RegisterValueChangedCallback(evt => p.AttachedField.SetValue(n, evt.newValue));
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -160; // Adjust as needed
         }
@@ -265,9 +264,9 @@ public class VisualPort : VisualElement
         {
             ColorField inputField = new ColorField();
 
-            inputField.value = (Color)p.defaultValue.ExtractValue(typeof(Color));
+            inputField.value = (Color)p.AttachedField.GetValue(n);
             fieldContainer.Add(new Label("Color"));
-            inputField.RegisterValueChangedCallback(evt => p.defaultValue.colorValue = evt.newValue);
+            inputField.RegisterValueChangedCallback(evt => p.AttachedField.SetValue(n, evt.newValue));
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -60; // Adjust as needed
         }
@@ -279,9 +278,9 @@ public class VisualPort : VisualElement
                 allowSceneObjects = false
             };
 
-            inputField.value = (GameObject)p.defaultValue.ExtractValue(typeof(GameObject));
+            inputField.value = (GameObject)p.AttachedField.GetValue(n);
             fieldContainer.Add(new Label(""));
-            inputField.RegisterValueChangedCallback(evt=> p.defaultValue.gameObjectValue = evt.newValue as GameObject);
+            inputField.RegisterValueChangedCallback(evt => p.AttachedField.SetValue(n, evt.newValue));
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -160; // Adjust as needed
         }
@@ -293,9 +292,9 @@ public class VisualPort : VisualElement
                 allowSceneObjects = false
             };
 
-            inputField.value = (Transform)p.defaultValue.ExtractValue(typeof(Transform));
+            inputField.value = (Transform)p.AttachedField.GetValue(n);
             fieldContainer.Add(new Label("Transform"));
-            inputField.RegisterValueChangedCallback(evt => p.defaultValue.transformValue = evt.newValue as Transform);
+            inputField.RegisterValueChangedCallback(evt => p.AttachedField.SetValue(n, evt.newValue));
             fieldContainer.Add(inputField);
             fieldContainer.style.left = -60; // Adjust as needed
         }

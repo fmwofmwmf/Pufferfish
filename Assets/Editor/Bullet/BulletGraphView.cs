@@ -35,22 +35,14 @@ public class BulletGraphView : GraphView
       graphViewChanged -= OnGraphViewChanged;
       DeleteElements(graphElements);
       graphViewChanged += OnGraphViewChanged;
-      
+
+      graph.InitializeEdges();
+          
       graph.nodes.ForEach(node => CreateNodeView(node));
 
-      List<CustomEdge> del = new List<CustomEdge>();
-      foreach (var edge in graph.edges)
+      for (int i = graph.edges.Count - 1; i >= 0; i--)
       {
-         if (edge.remove)
-         {
-            del.Add(edge);
-            continue;
-         }
-         CustomPort inPort = edge.InputPort;
-         CustomPort outPort = edge.OutputPort;
-         
-         inPort.Connect(edge);
-         outPort.Connect(edge);
+         var edge = graph.edges[i];
 
          Port ip = FindNodeView(edge.inputNode).Ports[edge.inName].port;
          Port op = FindNodeView(edge.outputNode).Ports[edge.outName].port;
@@ -58,7 +50,7 @@ public class BulletGraphView : GraphView
          Edge e = ip.ConnectTo(op);
          AddElement(e);
       }
-      del.ForEach(e => graph.edges.Remove(e));
+
    }
 
    NodeView FindNodeView(Node node)
