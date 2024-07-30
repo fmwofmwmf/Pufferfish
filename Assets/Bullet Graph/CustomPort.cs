@@ -24,6 +24,11 @@ public class CustomPort
     {
         fieldName = info.Name;
         displayName = info.Name;
+        var n = info.GetCustomAttribute<PortNameAttribute>();
+        if (n != null)
+        {
+            displayName = n.Name;
+        }
         AttachedField = info;
         FieldType = info.FieldType;
         readOnly = info.GetCustomAttribute<PortAttribute>().readOnly;

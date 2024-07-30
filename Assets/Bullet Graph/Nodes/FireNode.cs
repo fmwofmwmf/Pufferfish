@@ -20,15 +20,16 @@ public class FireNode: Node
       if (!state.state.Virtual)
       {
          var b = Instantiate(bullet, position, Mathfm.RightQ(direction), state.attached.transform);
-         output = new(b, position, direction);
+         output = new(b, position, direction.normalized);
          
          var next = FindOutputPort("output");
          if (next.Edges.Any())
          {
+            b.SetActive(false);
             next.Edges[0].inputNode.Eval(state);
          }
       }
-      
+
       return state;
    }
 }

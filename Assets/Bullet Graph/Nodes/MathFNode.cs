@@ -9,9 +9,9 @@ using UnityEngine;
 public class MathFNode: Node
 {
    
-   [Port(false)] public float float1;
-   [Port(false)] public float float2;
-   [Port(true)] public float output;
+   [PortName("")] [Port(false)] public float float1;
+   [PortName("")] [Port(false)] public float float2;
+   [PortName("")] [Port(true)] public float output;
    [Editable][SerializeField] private Operation mode;
    public override string Name => "Math (Float)";
    protected override TreeStateData Evaluate(TreeStateData state)
@@ -40,6 +40,10 @@ public class MathFNode: Node
             if (float2 != 0) output = float1 / float2;
             else output = 0;
             break;
+         case Operation.floorDiv:
+            if (float2 != 0) output = Mathf.Floor(float1 / float2);
+            else output = 0;
+            break;
       }
       return state;
    }
@@ -52,6 +56,7 @@ public class MathFNode: Node
       multiply,
       mod,
       sinCos,
-      divide
+      divide,
+      floorDiv
    }
 }

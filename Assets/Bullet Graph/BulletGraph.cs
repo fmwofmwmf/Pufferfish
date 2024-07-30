@@ -6,6 +6,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 [CreateAssetMenu()]
 public class BulletGraph : ScriptableObject
@@ -16,6 +17,17 @@ public class BulletGraph : ScriptableObject
 
     public void InitializeEdges()
     {
+        Object[] assets = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(this));
+
+        // Process each asset
+        foreach (Object asset in assets)
+        {
+            if (asset != this && !nodes.Contains(asset))
+            {
+                AssetDatabase.RemoveObjectFromAsset(asset);
+            }
+        }
+        AssetDatabase.SaveAssets();
         if (started) return;
         started = true;
         List<CustomEdge> del = new List<CustomEdge>();
@@ -24,9 +36,18 @@ public class BulletGraph : ScriptableObject
             var edge = edges[i];
 
             del.Add(edge);
+            if (!edge.inputNode || !edge.outputNode)
+            {
+                continue;
+            }
 
             CustomPort inPort = edge.InputPort;
             CustomPort outPort = edge.OutputPort;
+            
+            if (inPort.Edges.Exists(e => e.OutputPort == outPort) || outPort.Edges.Exists(e => e.InputPort == inPort) )
+            {
+                continue;
+            }
 
             Connect(edge.inputNode, edge.outputNode, edge.inName, edge.outName);
         }
@@ -51,7 +72,7 @@ public class BulletGraph : ScriptableObject
     {
         foreach (var n in nodes)
         {
-            n.Reset();
+            n.ClearState();
         }
     }
 

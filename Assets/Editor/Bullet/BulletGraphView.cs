@@ -43,14 +43,22 @@ public class BulletGraphView : GraphView
       for (int i = graph.edges.Count - 1; i >= 0; i--)
       {
          var edge = graph.edges[i];
-
-         Port ip = FindNodeView(edge.inputNode).Ports[edge.inName].port;
-         Port op = FindNodeView(edge.outputNode).Ports[edge.outName].port;
+         try
+         {
+            var inv = FindNodeView(edge.inputNode);
+            var onv = FindNodeView(edge.outputNode);
+            Port ip = inv.Ports[edge.inName].port;
+            Port op = onv.Ports[edge.outName].port;
          
-         Edge e = ip.ConnectTo(op);
-         AddElement(e);
+            Edge e = ip.ConnectTo(op);
+            AddElement(e);
+         }
+         catch (Exception exception)
+         {
+            Debug.Log($"uhoh {edge.inputNode} {edge.outputNode} {exception}");
+            edge.DeleteEdge();
+         }
       }
-
    }
 
    NodeView FindNodeView(Node node)
@@ -127,7 +135,6 @@ public class BulletGraphView : GraphView
             VisualPort p1 = edge.input.parent as VisualPort;
             VisualPort p2 = edge.output.parent as VisualPort;
             
-            Debug.Log(p2);
             p1.Collapse();
             currentGraph.Connect(n1.Node, n2.Node, p1.Field, p2.Field);
          });

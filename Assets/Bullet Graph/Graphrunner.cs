@@ -11,25 +11,28 @@ public class Graphrunner : StateMachineBehaviour
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex,
         AnimatorControllerPlayable controller)
     {
+        g.InitializeEdges();
         g.Reset();
-        var node = g.nodes.Find(
+        FireNode node = g.nodes.Find(
             n => n is FireNode f && f.id == id
-        );
+        ) as FireNode;
         animator.GetComponent<MonoBehaviour>().StartCoroutine(RunNode(node, animator.gameObject));
     }
     
-    private IEnumerator RunNode(Node n, GameObject go)
+    private IEnumerator RunNode(FireNode n, GameObject go)
     {
-        Node.TreeStateData state = new() { originator = n, attached = go, activationId = Random.Range(0, 57890190), test = false };
+        Node.TreeStateData state = new() { originator = n, attached = go, activationId = Random.Range(0, 57890190), test = false, state = new()};
         state = state.Repeat();
         var i = 0;
-        while (state.state.Repeat && i<300)
+        float delay;
+        while (state.state.Repeat && i<5000)
         {
             state = n.Eval(state.Reset());
             state.iterationId++;
             i++;
-            yield return new WaitForSeconds(1f / 60);
+            delay = state.state.delay;
+            if (delay != 0) yield return new WaitForSeconds(delay);
         }
-        Debug.Log($"finished testing {n}");
+        Debug.Log($"finished running {n}");
     }
 }

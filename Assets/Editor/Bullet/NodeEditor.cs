@@ -29,7 +29,7 @@ public class NodeEditor: Editor
                 if (g != null) DestroyImmediate(g);
                 var r = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 r.name = "BulletTest";
-                RunNode(n, r);
+                _ = RunNode(n, r);
 
             }
             if (GUILayout.Button("Reset"))
@@ -65,7 +65,7 @@ public class NodeEditor: Editor
 
     private async Awaitable RunNode(Node n, GameObject g)
     {
-        Node.TreeStateData state = new() { originator = n, attached = g, activationId = Random.Range(0, 57890190), test = true };
+        Node.TreeStateData state = new() { originator = n, attached = g, activationId = Random.Range(0, 57890190), test = true , state = new Node.TreeState()};
         state = state.Repeat();
         var i = 0;
         while (state.state.Repeat && i<300)

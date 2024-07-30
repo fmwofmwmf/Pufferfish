@@ -26,7 +26,7 @@ public class RepeatNode: Node
          activeId = state.activationId;
          iterId = state.iterationId;
          stopProp = true;
-         lastUpstream = state.state;
+         lastUpstream = state.state.Clone();
          if (state.state.Error) return state;
       }
 

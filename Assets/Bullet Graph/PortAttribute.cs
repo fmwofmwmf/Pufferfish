@@ -44,6 +44,16 @@ public class PortDecoratorAttribute : Attribute
 }
 
 [AttributeUsage(AttributeTargets.Field)]
+public class PortNameAttribute : Attribute
+{
+    public string Name;
+    public PortNameAttribute(string s)
+    {
+        Name = s;
+    }
+}
+
+[AttributeUsage(AttributeTargets.Field)]
 public class EditableAttribute : Attribute
 {
 }

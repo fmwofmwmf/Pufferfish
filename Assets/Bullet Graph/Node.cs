@@ -21,6 +21,7 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     private int iterationId, activationId;
     private Action transferDelegate;
     private List<Node> next;
+    private Dictionary<string, CustomPort> inPortDict, outPortDict;
     public virtual void ClearState()
     {
          
@@ -88,17 +89,21 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
                 
                 var sourceField = Expression.Field(sourceParameter, get.OutputPort.AttachedField);
                 var targetField = Expression.Field(targetParameter, get.InputPort.AttachedField);
+
+                Expression value = sourceField;
+                if (get.InType != get.OutType)
+                {
+                    var tryTypeConvertCall = Expression.Call(
+                        tryTypeConvertMethod,
+                        Expression.Convert(sourceField, typeof(object)),
+                        Expression.Constant(targetField.Type)
+                    );
+
+                    // Convert the result back to the target field type
+                    value = Expression.Convert(tryTypeConvertCall, targetField.Type);
+                }
                 
-                var tryTypeConvertCall = Expression.Call(
-                    tryTypeConvertMethod,
-                    Expression.Convert(sourceField, typeof(object)),
-                    Expression.Constant(targetField.Type)
-                );
-
-                // Convert the result back to the target field type
-                var convertedValue = Expression.Convert(tryTypeConvertCall, targetField.Type);
-
-                var assignExpression = Expression.Assign(targetField, convertedValue);
+                var assignExpression = Expression.Assign(targetField, value);
                 
                 expressions.Add(assignExpression);
             }
@@ -113,7 +118,6 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     {
         if (input == null) return null;
         var t1 = input.GetType();
-        Debug.Log($"{t1} {targetType}");
         if (t1 == targetType) return input;
         
         switch (t1)
@@ -151,8 +155,6 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
         {
             foreach (var node in next)
             {
-                Debug.Log(node);
-                
                 if (node)
                 {
                     outState = outState.Merge(node.Eval(state));
@@ -213,14 +215,16 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     
     public CustomPort FindInputPort(string field)
     {
-        var p = inputPorts.Find(p => p.fieldName == field);
+        inPortDict ??= inputPorts.ToDictionary(p => p.fieldName, p => p);
+        var p= inPortDict[field];
         if (p.AttachedField == null) p.Reset(nodeFields[field]);
         return p;
     }
     
     public CustomPort FindOutputPort(string field)
     {
-        var p = outputPorts.Find(p => p.fieldName == field);
+        outPortDict ??= outputPorts.ToDictionary(p => p.fieldName, p => p);
+        var p = outPortDict[field];
         if (p.AttachedField == null) p.Reset(nodeFields[field]);
         return p;
     }
@@ -261,7 +265,7 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
     
     
 
-    public struct TreeStateData
+    public class TreeStateData
     {
         public Node originator;
         public GameObject attached;
@@ -308,12 +312,14 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
             state.Virtual = other.state.Virtual;
             state.Repeat = other.state.Repeat;
             state.Error = other.state.Error;
+            state.delay += other.state.delay;
             return this;
         }
         
         public TreeStateData Reset()
         {
             state.Clear();
+            
             return this;
         }
     }
@@ -336,12 +342,18 @@ public abstract class Node : ScriptableObject, ISerializationCallbackReceiver
             set => e = e || value;
         }
         private bool r, f, e;
-
+        public float delay;
         public void Clear()
         {
             r = false;
             f = false;
             e = false;
+            delay = 0;
+        }
+        
+        public TreeState Clone()
+        {
+            return new TreeState { r = r, f=f,e=e,delay=delay};
         }
     }
 }
